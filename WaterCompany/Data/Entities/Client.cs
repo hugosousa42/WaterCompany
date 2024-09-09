@@ -8,7 +8,8 @@ namespace WaterCompany.Data.Entities
         
         public int Id { get; set; }
 
-
+        [Required]
+        [MaxLength(50, ErrorMessage = "The filed {0} can contain {1} characters lenght.")]
         public string Name { get; set; }
 
         
@@ -19,7 +20,8 @@ namespace WaterCompany.Data.Entities
 
    
         public string Address { get; set; }
-
+        
+        [Display(Name = "Registration Date")]
         public DateTime RegistrationDate { get; set; }
 
     }
