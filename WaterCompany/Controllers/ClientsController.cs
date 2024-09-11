@@ -9,20 +9,19 @@ namespace WaterCompany.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly IRepository _repository;
-
-        public ClientsController(IRepository repository)
+        private readonly IClientRepository _clientRepository;
+        public ClientsController(IClientRepository ClientRepository)
         {
-            _repository = repository;
+            _clientRepository = ClientRepository;
         }
 
-        // GET: Clients
+        // GET: Products
         public IActionResult Index()
         {
-            return View(_repository.GetClients());
+            return View(_clientRepository.GetAll());
         }
 
-        // GET: Clients/Details/5
+        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -30,7 +29,7 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
-            var client = _repository.GetClient(id.Value);
+            var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -39,13 +38,13 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // GET: Clients/Create
+        // GET: Products/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
+        // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -54,22 +53,21 @@ namespace WaterCompany.Controllers
         {
             if (ModelState.IsValid)
             {
-                _repository.AddClient(client);
-                await _repository.SaveAllAsync();
+                await _clientRepository.CreateAsync(client);
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
         }
 
-        // GET: Clients/Edit/5
-        public IActionResult Edit(int? id)
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var client = _repository.GetClient(id.Value);
+            var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -77,12 +75,12 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // POST: Clients/Edit/5
+        // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,PhoneNumber,Address,RegistrationDate")] Client client)
+        public async Task<IActionResult> Edit(int id, Client client)
         {
             if (id != client.Id)
             {
@@ -93,12 +91,11 @@ namespace WaterCompany.Controllers
             {
                 try
                 {
-                    _repository.UpdateClient(client);
-                    await _repository.SaveAllAsync();
+                    await _clientRepository.UpdateAsync(client);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_repository.ClientExists(client.Id))
+                    if (!await _clientRepository.ExistsAsync(client.Id))
                     {
                         return NotFound();
                     }
@@ -112,15 +109,15 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // GET: Clients/Delete/5
-        public IActionResult Delete(int? id)
+        // GET: Products/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var client = _repository.GetClient(id.Value);
+            var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -129,14 +126,13 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // POST: Clients/Delete/5
+        // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = _repository.GetClient(id);
-            _repository.RemoveClient(client);
-            await _repository.SaveAllAsync();
+            var client = await _clientRepository.GetByIdAsync(id);
+            await _clientRepository.DeleteAsync(client);
             return RedirectToAction(nameof(Index));
         }
 

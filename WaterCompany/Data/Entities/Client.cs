@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WaterCompany.Data.Entities
 {
-    public class Client
+    public class Client : IEntity
     {
         
         public int Id { get; set; }
