@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
@@ -12,17 +9,17 @@ namespace WaterCompany.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IRepository _repository;
 
-        public ClientsController(DataContext context)
+        public ClientsController(IRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         // GET: Clients
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            return View(_repository.GetClients());
         }
 
         // GET: Clients/Details/5
@@ -33,8 +30,7 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var client = _repository.GetClient(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -54,26 +50,26 @@ namespace WaterCompany.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,PhoneNumber,Address,RegistrationDate")] Client client)
+        public async Task<IActionResult> Create(Client client)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                _repository.AddClient(client);
+                await _repository.SaveAllAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
         }
 
         // GET: Clients/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var client = await _context.Clients.FindAsync(id);
+            var client = _repository.GetClient(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -97,12 +93,12 @@ namespace WaterCompany.Controllers
             {
                 try
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
+                    _repository.UpdateClient(client);
+                    await _repository.SaveAllAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClientExists(client.Id))
+                    if (!_repository.ClientExists(client.Id))
                     {
                         return NotFound();
                     }
@@ -117,15 +113,14 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var client = _repository.GetClient(id.Value);
             if (client == null)
             {
                 return NotFound();
@@ -139,15 +134,11 @@ namespace WaterCompany.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
+            var client = _repository.GetClient(id);
+            _repository.RemoveClient(client);
+            await _repository.SaveAllAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.Id == id);
-        }
     }
 }
