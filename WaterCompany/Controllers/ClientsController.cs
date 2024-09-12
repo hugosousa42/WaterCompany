@@ -4,15 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
+using WaterCompany.Helpers;
 
 namespace WaterCompany.Controllers
 {
     public class ClientsController : Controller
     {
         private readonly IClientRepository _clientRepository;
-        public ClientsController(IClientRepository ClientRepository)
+        private readonly IUserHelper _userHelper;
+        public ClientsController(IClientRepository ClientRepository,
+            IUserHelper userHelper)
         {
             _clientRepository = ClientRepository;
+            _userHelper = userHelper;
         }
 
         // GET: Products
@@ -53,6 +57,8 @@ namespace WaterCompany.Controllers
         {
             if (ModelState.IsValid)
             {
+                //TODO: Change to the user that is here
+                client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
                 await _clientRepository.CreateAsync(client);
                 return RedirectToAction(nameof(Index));
             }
@@ -82,7 +88,7 @@ namespace WaterCompany.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Client client)
         {
-            if (id != client.Id)
+            if (id != client.id)
             {
                 return NotFound();
             }
@@ -91,11 +97,13 @@ namespace WaterCompany.Controllers
             {
                 try
                 {
+                    //TODO: Change to the user that is here
+                    client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
                     await _clientRepository.UpdateAsync(client);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _clientRepository.ExistsAsync(client.Id))
+                    if (!await _clientRepository.ExistsAsync(client.id))
                     {
                         return NotFound();
                     }

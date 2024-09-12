@@ -23,7 +23,7 @@ namespace WaterCompany.Data
         {
             return await _context.Set<T>()
                 .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id);
+                .FirstOrDefaultAsync(e => e.id == id);
         }
 
         public async Task CreateAsync(T entity)
@@ -46,7 +46,7 @@ namespace WaterCompany.Data
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _context.Set<T>().AnyAsync(e => e.Id == id);
+            return await _context.Set<T>().AnyAsync(e => e.id == id);
         }
 
         private async Task<bool> SaveAllAsync()

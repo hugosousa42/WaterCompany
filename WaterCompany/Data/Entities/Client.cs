@@ -6,7 +6,7 @@ namespace WaterCompany.Data.Entities
     public class Client : IEntity
     {
         
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [Required]
         [MaxLength(50, ErrorMessage = "The filed {0} can contain {1} characters lenght.")]
@@ -23,6 +23,8 @@ namespace WaterCompany.Data.Entities
         
         [Display(Name = "Registration Date")]
         public DateTime RegistrationDate { get; set; }
+
+        public User user { get; set; }
 
     }
 }
