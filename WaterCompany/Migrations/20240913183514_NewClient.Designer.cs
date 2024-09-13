@@ -10,8 +10,8 @@ using WaterCompany.Data;
 namespace WaterCompany.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240912165918_AddUsers")]
-    partial class AddUsers
+    [Migration("20240913183514_NewClient")]
+    partial class NewClient
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -163,6 +163,9 @@ namespace WaterCompany.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

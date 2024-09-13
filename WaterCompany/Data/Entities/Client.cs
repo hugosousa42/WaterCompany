@@ -12,8 +12,13 @@ namespace WaterCompany.Data.Entities
         [MaxLength(50, ErrorMessage = "The filed {0} can contain {1} characters lenght.")]
         public string Name { get; set; }
 
-        
+
+        [Display(Name = "Image")]
+        public string ImageUrl { get; set; }
+
+
         public string Email { get; set; }
+
 
         [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
