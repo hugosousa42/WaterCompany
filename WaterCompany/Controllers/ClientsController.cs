@@ -15,11 +15,18 @@ namespace WaterCompany.Controllers
     {
         private readonly IClientRepository _clientRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
+        private readonly IConverterHelper _converterHelper;
         public ClientsController(IClientRepository ClientRepository,
-            IUserHelper userHelper)
+            IUserHelper userHelper,
+            IImageHelper imageHelper,
+             IConverterHelper converterHelper)
         {
             _clientRepository = ClientRepository;
             _userHelper = userHelper;
+            _imageHelper = imageHelper;
+            _converterHelper = converterHelper;
+
         }
 
         // GET: Clients
@@ -65,22 +72,10 @@ namespace WaterCompany.Controllers
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
-
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot\\images\\clients",
-                        file);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/clients/{file}";
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "Clients");
                 }
-                var client = this.ToClient(model, path);
+
+                var client = _converterHelper.ToClient(model, path, true);
 
                 //TODO: Change to the user that is here
                 client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
@@ -92,19 +87,6 @@ namespace WaterCompany.Controllers
             return View(model);
         }
 
-        private Client ToClient(ClientViewModel model, string path)
-        {
-            return new Client
-            {
-                id = model.id,
-                Name = model.Name,
-                ImageUrl = path,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber,
-                RegistrationDate = model.RegistrationDate,
-                user = model.user        
-            };
-        }
 
         // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -120,23 +102,10 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
-            var model = this.ToClientViewModel(client);
+            var model = _converterHelper.ToClientViewModel(client);
             return View(model);
         }
 
-        private ClientViewModel ToClientViewModel(Client client)
-        {
-            return new ClientViewModel
-            {
-                id = client.id,
-                Name = client.Name,
-                ImageUrl = client.ImageUrl,
-                Email = client.Email,
-                PhoneNumber = client.PhoneNumber,
-                RegistrationDate = client.RegistrationDate,
-                user = client.user
-            };
-        }
 
         // POST: Clients/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -153,23 +122,10 @@ namespace WaterCompany.Controllers
                     var path = model.ImageUrl;
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        var guid = Guid.NewGuid().ToString();
-                        var file = $"{guid}.jpg";
-
-                        path = Path.Combine(
-                            Directory.GetCurrentDirectory(),
-                            "wwwroot\\images\\clients",
-                            file);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-
-                        path = $"~/images/clients/{file}";
+                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "Clients");
                     }
 
-                    var client = this.ToClient(model, path);
+                    var client = _converterHelper.ToClient(model, path, false);
 
                     //TODO: Change to the user that is here
                     client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");

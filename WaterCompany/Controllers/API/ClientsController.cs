@@ -6,7 +6,7 @@ namespace WaterCompany.Controllers.API
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientsController : ControllerBase
+    public class ClientsController : Controller
     {
         private readonly IClientRepository _clientRepository;
 
