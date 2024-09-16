@@ -18,7 +18,7 @@ namespace WaterCompany.Controllers.API
         [HttpGet]
         public IActionResult GetClients()
         {
-            return Ok(_clientRepository.GetAll());
+            return Ok(_clientRepository.GetAllWithUsers());
         }
     }
 }

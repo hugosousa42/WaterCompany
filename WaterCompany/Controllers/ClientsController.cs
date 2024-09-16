@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
+using WaterCompany.Models;
 
 namespace WaterCompany.Controllers
 {
@@ -19,13 +22,13 @@ namespace WaterCompany.Controllers
             _userHelper = userHelper;
         }
 
-        // GET: Products
+        // GET: Clients
         public IActionResult Index()
         {
             return View(_clientRepository.GetAll());
         }
 
-        // GET: Products/Details/5
+        // GET: Clients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,30 +45,68 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // GET: Products/Create
+        // GET: Clients/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Products/Create
+        // POST: Clients/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Client client)
+        public async Task<IActionResult> Create(ClientViewModel model)
         {
             if (ModelState.IsValid)
             {
+
+                var path = string.Empty;
+
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var file = $"{guid}.jpg";
+
+                    path = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot\\images\\clients",
+                        file);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await model.ImageFile.CopyToAsync(stream);
+                    }
+
+                    path = $"~/images/clients/{file}";
+                }
+                var client = this.ToClient(model, path);
+
                 //TODO: Change to the user that is here
                 client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
                 await _clientRepository.CreateAsync(client);
                 return RedirectToAction(nameof(Index));
             }
-            return View(client);
+
+
+            return View(model);
         }
 
-        // GET: Products/Edit/5
+        private Client ToClient(ClientViewModel model, string path)
+        {
+            return new Client
+            {
+                id = model.id,
+                Name = model.Name,
+                ImageUrl = path,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                RegistrationDate = model.RegistrationDate,
+                user = model.user        
+            };
+        }
+
+        // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,32 +119,65 @@ namespace WaterCompany.Controllers
             {
                 return NotFound();
             }
-            return View(client);
+
+            var model = this.ToClientViewModel(client);
+            return View(model);
         }
 
-        // POST: Products/Edit/5
+        private ClientViewModel ToClientViewModel(Client client)
+        {
+            return new ClientViewModel
+            {
+                id = client.id,
+                Name = client.Name,
+                ImageUrl = client.ImageUrl,
+                Email = client.Email,
+                PhoneNumber = client.PhoneNumber,
+                RegistrationDate = client.RegistrationDate,
+                user = client.user
+            };
+        }
+
+        // POST: Clients/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Client client)
+        public async Task<IActionResult> Edit( ClientViewModel model)
         {
-            if (id != client.id)
-            {
-                return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var path = model.ImageUrl;
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        var guid = Guid.NewGuid().ToString();
+                        var file = $"{guid}.jpg";
+
+                        path = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "wwwroot\\images\\clients",
+                            file);
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(stream);
+                        }
+
+                        path = $"~/images/clients/{file}";
+                    }
+
+                    var client = this.ToClient(model, path);
+
                     //TODO: Change to the user that is here
                     client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
                     await _clientRepository.UpdateAsync(client);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _clientRepository.ExistsAsync(client.id))
+                    if (!await _clientRepository.ExistsAsync(model.id))
                     {
                         return NotFound();
                     }
@@ -114,10 +188,10 @@ namespace WaterCompany.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(client);
+            return View(model);
         }
 
-        // GET: Products/Delete/5
+        // GET: Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,7 +208,7 @@ namespace WaterCompany.Controllers
             return View(client);
         }
 
-        // POST: Products/Delete/5
+        // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

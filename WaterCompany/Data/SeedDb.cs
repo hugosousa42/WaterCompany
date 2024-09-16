@@ -61,7 +61,7 @@ namespace WaterCompany.Data
             _context.Clients.Add(new Client
             {
                 Name = name,
-                ImageUrl = name + ".jpg",
+                ImageUrl = string.Empty,
                 Email = name + "@email.com",
                 PhoneNumber = Convert.ToString(_random.Next(1000000000)),
                 Address = name + " Street",
