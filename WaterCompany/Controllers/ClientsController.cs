@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data;
@@ -53,6 +54,7 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -89,6 +91,7 @@ namespace WaterCompany.Controllers
 
 
         // GET: Clients/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -148,6 +151,7 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
