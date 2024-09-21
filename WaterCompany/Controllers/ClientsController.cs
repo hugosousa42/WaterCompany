@@ -72,7 +72,7 @@ namespace WaterCompany.Controllers
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "Clients");
+                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "clients");
                 }
 
                 var client = _converterHelper.ToClient(model, path, true);
