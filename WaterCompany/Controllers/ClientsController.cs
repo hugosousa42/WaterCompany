@@ -80,7 +80,7 @@ namespace WaterCompany.Controllers
                 var client = _converterHelper.ToClient(model, path, true);
 
                 //TODO: Change to the user that is here
-                client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
+                client.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                 await _clientRepository.CreateAsync(client);
                 return RedirectToAction(nameof(Index));
             }
@@ -131,7 +131,7 @@ namespace WaterCompany.Controllers
                     var client = _converterHelper.ToClient(model, path, false);
 
                     //TODO: Change to the user that is here
-                    client.user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
+                    client.user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _clientRepository.UpdateAsync(client);
                 }
                 catch (DbUpdateConcurrencyException)

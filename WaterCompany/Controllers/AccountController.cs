@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using WaterCompany.Data.Entities;
 
 namespace WaterCompany.Controllers
 {
@@ -48,6 +50,56 @@ namespace WaterCompany.Controllers
         {
             await _userHelper.LogoutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterNewUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+                if (user == null)
+                {
+                    user = new User
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.UserName,
+                        UserName = model.UserName,
+                    };
+
+                    var result = await _userHelper.AddUserAsync(user, model.Password);
+                    if (result != IdentityResult.Success)
+                    {
+                        ModelState.AddModelError(string.Empty, "The user couldn't be created!");
+                        return View(model);
+                    }
+
+                    var LoginViewModel = new LoginViewModel
+                    {
+                        UserName = user.UserName,
+                        Password = model.Password,
+                        RememberMe = false,
+                    };
+
+                    var result2 = await _userHelper.LoginAsync(LoginViewModel);
+                    if (result2.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    ModelState.AddModelError(string.Empty, "The user couldn't be logged!");
+
+                }
+
+            }
+
+            return View(model);
         }
     }
 }
