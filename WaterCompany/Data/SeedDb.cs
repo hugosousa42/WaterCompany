@@ -23,6 +23,9 @@ namespace WaterCompany.Data
         {
             await _context.Database.EnsureCreatedAsync();
 
+            await _userHelper.CheckRoleAsync("Admin");
+            await _userHelper.CheckRoleAsync("Customer");
+
             var user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
             if (user == null)
             {
@@ -41,6 +44,14 @@ namespace WaterCompany.Data
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+
+            var IsInRole = await _userHelper.IsUserInRoleAsyc(user, "Admin");
+            if (!IsInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
             if (!_context.Clients.Any())

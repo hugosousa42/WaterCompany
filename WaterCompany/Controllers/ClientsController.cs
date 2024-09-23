@@ -54,7 +54,7 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Create
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
