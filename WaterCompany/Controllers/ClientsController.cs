@@ -41,13 +41,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             return View(client);
@@ -96,13 +96,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             var model = _converterHelper.ToClientViewModel(client);
@@ -156,13 +156,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("ClientNotFound");
             }
 
             return View(client);
@@ -176,6 +176,11 @@ namespace WaterCompany.Controllers
             var client = await _clientRepository.GetByIdAsync(id);
             await _clientRepository.DeleteAsync(client);
             return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult ClientNotFound()
+        {
+            return View();
         }
 
     }
