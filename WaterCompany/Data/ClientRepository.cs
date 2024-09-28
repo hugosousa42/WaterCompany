@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WaterCompany.Data
 {
@@ -16,6 +18,23 @@ namespace WaterCompany.Data
         public IQueryable GetAllWithUsers()
         {
             return _context.Clients.Include(p => p.user);
+        }
+
+        public IEnumerable<SelectListItem> GetComboClients()
+        {
+            var list = _context.Clients.Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.id.ToString()
+            }).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a client)",
+                Value = "0"
+            });
+
+            return list;
         }
     }
 }

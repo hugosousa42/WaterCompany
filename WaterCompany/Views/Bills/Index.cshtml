@@ -1,0 +1,65 @@
+﻿@model IEnumerable<WaterCompany.Data.Entities.Bill>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Bills</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            @if (this.User.IsInRole("Admin"))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.User.FullName)
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfIssue)
+            </th>
+            <th>
+                # Lines
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Volume)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Value)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>
+                        @Html.DisplayFor(modelItem => item.User.FullName)
+                    </th>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfIssue)
+                </td>
+                <td>
+                    # Lines
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Volume)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value)
+                </td>
+                <td>
+                    <a asp-action="Pay" asp-route-id="@item.id" class="btn btn-info" id="btnDeliver">Pay</a>
+                    <a asp-action="Delete" asp-route-id="@item.id" class="btn btn-danger" id="btnDelete">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
