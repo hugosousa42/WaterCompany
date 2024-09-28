@@ -14,7 +14,7 @@ namespace WaterCompany.Helpers
                 ImageUrl = path,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                RegistrationDate = model.RegistrationDate,
+                Birthdate = model.Birthdate,
                 user = model.user
             };
         }
@@ -28,7 +28,7 @@ namespace WaterCompany.Helpers
                 ImageUrl = cliente.ImageUrl,
                 Email = cliente.Email,
                 PhoneNumber = cliente.PhoneNumber,
-                RegistrationDate = cliente.RegistrationDate,
+                Birthdate = cliente.Birthdate,
                 user = cliente.user
             };
         }

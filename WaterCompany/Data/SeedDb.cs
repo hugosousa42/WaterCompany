@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 
@@ -21,7 +22,7 @@ namespace WaterCompany.Data
 
         public async Task SeedAsync()
         {
-            await _context.Database.EnsureCreatedAsync();
+            await _context.Database.MigrateAsync();
 
             await _userHelper.CheckRoleAsync("Admin");
             await _userHelper.CheckRoleAsync("Customer");
@@ -76,7 +77,7 @@ namespace WaterCompany.Data
                 Email = name + "@email.com",
                 PhoneNumber = Convert.ToString(_random.Next(1000000000)),
                 Address = name + " Street",
-                RegistrationDate = DateTime.Now,
+                Birthdate = DateTime.Now,
                 user = user
             });
         }

@@ -26,8 +26,8 @@ namespace WaterCompany.Data.Entities
    
         public string Address { get; set; }
         
-        [Display(Name = "Registration Date")]
-        public DateTime RegistrationDate { get; set; }
+       
+        public DateTime Birthdate { get; set; }
 
         public User user { get; set; }
 
