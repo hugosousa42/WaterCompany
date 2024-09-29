@@ -17,5 +17,7 @@ namespace WaterCompany.Data
 
         Task DeleteDetailTempAsync(int id);
 
+        Task<bool> ConfirmBillAsync(string usarName);
+
     }
 }

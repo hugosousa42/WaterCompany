@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
@@ -42,6 +43,7 @@ namespace WaterCompany.Data
             if (await _userHelper.IsUserInRoleAsyc(user, "Admin"))
             {
                 return _context.Bills
+                    .Include(o => o.User)
                     .Include(o => o.Items)
                     .ThenInclude(i => i.Client)
                     .OrderByDescending(o => o.DateOfIssue);
@@ -120,6 +122,40 @@ namespace WaterCompany.Data
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ConfirmBillAsync(string usarName)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(usarName);
+            if (user == null)
+            {
+                return false;
+            }
 
+            var billTmps = await _context.BillDetailsTemp
+                .Include(o => o.Client)
+                .Where(o => o.User == user)
+                .ToListAsync();
+
+            if (billTmps == null || billTmps.Count == 0)
+            {
+                return false;
+            }
+
+            var detail = billTmps.Select(o => new BillDetail
+            {
+                Client = o.Client,
+                Volume = o.Volume     
+            }).ToList();
+
+            var bill = new Bill
+            {
+                DateOfIssue = DateTime.UtcNow,
+                User = user,
+                Items = detail
+            };
+            await CreateAsync(bill);
+            _context.BillDetailsTemp.RemoveRange(billTmps);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

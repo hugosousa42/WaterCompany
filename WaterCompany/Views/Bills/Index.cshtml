@@ -19,10 +19,10 @@
                 </th>
             }
             <th>
-                @Html.DisplayNameFor(model => model.DateOfIssue)
+                @Html.DisplayNameFor(model => model.DateOfIssueLocal)
             </th>
             <th>
-                # Lines
+                @Html.DisplayNameFor(model => model.Lines)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Volume)
@@ -44,10 +44,10 @@
                     </th>
                 }
                 <td>
-                    @Html.DisplayFor(modelItem => item.DateOfIssue)
+                    @Html.DisplayFor(modelItem => item.DateOfIssueLocal)
                 </td>
                 <td>
-                    # Lines
+                    @Html.DisplayFor(modelItem => item.Lines)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Volume)
