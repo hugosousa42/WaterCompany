@@ -54,7 +54,6 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Create
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -171,11 +170,28 @@ namespace WaterCompany.Controllers
         // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _clientRepository.GetByIdAsync(id);
-            await _clientRepository.DeleteAsync(client);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _clientRepository.DeleteAsync(client);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"{client.Name} is probably being used!";
+                    ViewBag.ErrorMessage = $"{client.Name} cannot be deleted as there are bills using it.</br></br>" +
+                    $"Try deleting all the bills that are using it first, " +
+                    $"and then try deleting it again.";
+                }
+
+                return View("Error");
+            }
+        
         }
 
         public IActionResult ClientNotFound()
