@@ -52,7 +52,7 @@ namespace WaterCompany
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IBillRepository, BillRepository>();
-
+            services.AddScoped<ICountryRepository, CountryRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {

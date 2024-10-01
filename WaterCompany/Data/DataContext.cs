@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using WaterCompany.Data.Entities;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Linq;
+using WaterCompany.Data.Entities;
 
 namespace WaterCompany.Data
 {
@@ -11,10 +9,14 @@ namespace WaterCompany.Data
         public DbSet<Client> Clients { get; set; }
 
         public DbSet<Bill> Bills { get; set; }
-        
+
         public DbSet<BillDetail> BillDetails { get; set; }
-        
+
         public DbSet<BillDetailTemp> BillDetailsTemp { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public DbSet<City> Cities { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -37,7 +39,4 @@ namespace WaterCompany.Data
         //}
     }
 }
-
-
-
 

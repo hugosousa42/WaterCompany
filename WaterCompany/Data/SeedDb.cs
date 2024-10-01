@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,23 @@ namespace WaterCompany.Data
             await _userHelper.CheckRoleAsync("Admin");
             await _userHelper.CheckRoleAsync("Customer");
 
+            if (!_context.Countries.Any())
+            {
+                var cities = new List<City>()
+                {
+                    new City { Name = "Lisboa" },
+                    new City { Name = "Porto" },
+                    new City { Name = "Faro" }
+                };
+                _context.Countries.Add(new Country
+                {
+                    Cities = cities,
+                    Name = "Portugal"
+                });
+
+                await _context.SaveChangesAsync();
+            }
+
             var user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
             if (user == null)
             {
@@ -36,7 +54,10 @@ namespace WaterCompany.Data
                     LastName = "Sousa",
                     Email = "hugosb9@gmail.com",
                     UserName = "hugosb9@gmail.com",
-                    PhoneNumber = "123456789"
+                    PhoneNumber = "123456789",
+                     Address = "Coimbra Street",
+                    CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
                 };
 
                 var result = await _userHelper.AddUserAsync(user, "123456");
