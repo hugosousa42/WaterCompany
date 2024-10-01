@@ -5,6 +5,7 @@ using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Models;
+using WaterCompany.Migrations;
 
 namespace WaterCompany.Data
 {
@@ -156,6 +157,24 @@ namespace WaterCompany.Data
             _context.BillDetailsTemp.RemoveRange(billTmps);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task PayBill(PaymentViewModel model)
+        {
+            var bill = await _context.Bills.FindAsync(model.id);
+            if (bill == null)
+            {
+                return;
+            }
+
+            bill.PaymentDate = model.PaymentDate;
+            _context.Bills.Update(bill);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Bill> GetBillAsync(int id)
+        {
+            return await _context.Bills.FindAsync(id);
         }
     }
 }

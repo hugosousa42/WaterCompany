@@ -19,5 +19,9 @@ namespace WaterCompany.Data
 
         Task<bool> ConfirmBillAsync(string usarName);
 
+        Task PayBill(PaymentViewModel model);
+
+        Task<Bill> GetBillAsync(int id);
+
     }
 }

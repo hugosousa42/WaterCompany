@@ -15,6 +15,10 @@ namespace WaterCompany.Data.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = false)]
         public DateTime DateOfIssue { get; set; }
 
+        [Display(Name = "Payment Date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm tt}", ApplyFormatInEditMode = false)]
+        public DateTime? PaymentDate { get; set; }
+
         [Required]
         public User User { get; set; }
 

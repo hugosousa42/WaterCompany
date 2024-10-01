@@ -3,6 +3,7 @@ using WaterCompany.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace WaterCompany.Controllers
 {
@@ -97,6 +98,40 @@ namespace WaterCompany.Controllers
             }
 
             return RedirectToAction("Create");
+        }
+
+        public async Task<IActionResult> Pay(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var bill = await _billRepository.GetByIdAsync(id.Value);
+            if (bill == null)
+            {
+                return NotFound();
+            }
+
+            var model = new PaymentViewModel
+            {
+                id = bill.id,
+                PaymentDate = DateTime.Today
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pay(PaymentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                await _billRepository.PayBill(model);
+                return RedirectToAction("Index");
+            }
+
+            return View();
         }
     }
 }
