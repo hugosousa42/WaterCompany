@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data.Entities;
 using WaterCompany.Models;
@@ -46,11 +48,60 @@ namespace WaterCompany.Data
             return await _context.Cities.FindAsync(id);
         }
 
+        public IEnumerable<SelectListItem> GetComboCities(int countryId)
+        {
+            var country = _context.Countries.Find(countryId);
+            var list = new List<SelectListItem>();
+            if (country != null)
+            {
+                list = _context.Cities.Select(c => new SelectListItem
+                {
+                    Text = c.Name,
+                    Value = c.id.ToString()
+
+                }).OrderBy(l => l.Text).ToList();
+
+                list.Insert(0, new SelectListItem
+                {
+                    Text = "(Select a city)",
+                    Value = "0"
+                });
+
+            }
+
+            return list;
+        }
+
+        public IEnumerable<SelectListItem> GetComboCountries()
+        {
+            var list = _context.Countries.Select(c => new SelectListItem
+            {
+                Text = c.Name,
+                Value = c.id.ToString()
+
+            }).OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a country)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
         public IQueryable GetCountriesWithCities()
         {
             return _context.Countries
                            .Include(c => c.Cities)
                            .OrderBy(c => c.Name);
+        }
+
+        public async Task<Country> GetCountryAsync(City city)
+        {
+            return await _context.Countries
+                .Where(c => c.Cities.Any(ci => ci.id == city.id))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Country> GetCountryWithCitiesAsync(int id)

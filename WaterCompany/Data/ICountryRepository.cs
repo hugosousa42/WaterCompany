@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WaterCompany.Data.Entities;
 using WaterCompany.Models;
 
@@ -18,5 +20,11 @@ namespace WaterCompany.Data
         Task<int> UpdateCityAsync(City city);
 
         Task<int> DeleteCityAsync(City city);
+
+        IEnumerable<SelectListItem> GetComboCountries();
+
+        IEnumerable<SelectListItem> GetComboCities(int countryId);
+
+        Task<Country> GetCountryAsync(City city);
     }
 }

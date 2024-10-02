@@ -5,6 +5,7 @@ using System;
 using WaterCompany.Data.Entities;
 using WaterCompany.Data;
 using WaterCompany.Models;
+using System.Linq;
 
 namespace WaterCompany.Controllers
 {
@@ -187,6 +188,8 @@ namespace WaterCompany.Controllers
             await _countryRepository.DeleteAsync(country);
             return RedirectToAction(nameof(Index));
         }
+
+       
 
     }
 }

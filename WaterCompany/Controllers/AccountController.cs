@@ -5,16 +5,23 @@ using WaterCompany.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using WaterCompany.Data.Entities;
+using WaterCompany.Data;
+using System;
 
 namespace WaterCompany.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserHelper _userHelper;
 
-        public AccountController(IUserHelper userHelper)
+        private readonly IUserHelper _userHelper;
+        private readonly ICountryRepository _countryRepository;
+
+        public AccountController(
+            IUserHelper userHelper,
+            ICountryRepository countryRepository)
         {
             _userHelper = userHelper;
+            _countryRepository = countryRepository;
         }
 
         public IActionResult Login()
@@ -54,7 +61,13 @@ namespace WaterCompany.Controllers
 
         public IActionResult Register()
         {
-            return View();
+            var model = new RegisterNewUserViewModel
+            {
+                Countries = _countryRepository.GetComboCountries(),
+                Cities = _countryRepository.GetComboCities(0)
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -65,12 +78,17 @@ namespace WaterCompany.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(model.UserName);
                 if (user == null)
                 {
+                    var city = await _countryRepository.GetCityAsync(model.CityId);
+
                     user = new User
                     {
                         FirstName = model.FirstName,
                         LastName = model.LastName,
                         Email = model.UserName,
                         UserName = model.UserName,
+                        Address = model.Address,
+                        CityId = city.id,
+                        City = city,
                     };
 
                     var result = await _userHelper.AddUserAsync(user, model.Password);
@@ -96,6 +114,17 @@ namespace WaterCompany.Controllers
                     ModelState.AddModelError(string.Empty, "The user couldn't be logged!");
 
                 }
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                                  .Select(e => e.ErrorMessage)
+                                                  .ToList();
+                    // Log ou inspecione esses erros
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine(error); // Ou use log, ou exiba na View
+                    }
+                }
 
             }
 
@@ -105,13 +134,32 @@ namespace WaterCompany.Controllers
         public async Task<IActionResult> ChangeUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
-            var model = new ChangeUserViewModel
+            var model = new ChangeUserViewModel();
+            if (user != null)
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-            };
+                model.FirstName = user.FirstName;
+                model.LastName = user.LastName;
+                model.Address = user.Address;
+                model.PhoneNumber = user.PhoneNumber;
 
+                var city = await _countryRepository.GetCityAsync(user.CityId);
+                if (city != null)
+                {
+                    var country = await _countryRepository.GetCountryAsync(city);
+                    if (country != null)
+                    {
+                        model.CountryId = country.id;
+                        model.Cities = _countryRepository.GetComboCities(country.id);
+                        model.Countries = _countryRepository.GetComboCountries();
+                        model.CityId = user.CityId;
+                    }
+                }
+            }
+
+            model.Cities = _countryRepository.GetComboCities(model.CountryId);
+            model.Countries = _countryRepository.GetComboCountries();
             return View(model);
+
         }
 
         [HttpPost]
@@ -123,8 +171,14 @@ namespace WaterCompany.Controllers
 
                 if (user != null)
                 {
+                    var city = await _countryRepository.GetCityAsync(model.CityId);
+
                     user.FirstName = model.FirstName;
                     user.LastName = model.LastName;
+                    user.Address = model.Address;
+                    user.PhoneNumber = model.PhoneNumber;
+                    user.CityId = model.CityId;
+                    user.City = city;
 
                     var response = await _userHelper.UpdateUserAsync(user);
 
@@ -179,6 +233,14 @@ namespace WaterCompany.Controllers
         public IActionResult NotAuthorized()
         {
             return View();
+        }
+
+        [HttpPost]
+        [Route("Account/GetCitiesAsync")]
+        public async Task<JsonResult> GetCitiesAsync(int countryId)
+        {
+            var country = await _countryRepository.GetCountryWithCitiesAsync(countryId);
+            return Json(country.Cities.OrderBy(c => c.Name));
         }
     }
 }
