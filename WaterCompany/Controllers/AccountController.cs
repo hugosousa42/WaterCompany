@@ -17,18 +17,19 @@ namespace WaterCompany.Controllers
 {
     public class AccountController : Controller
     {
-
         private readonly IUserHelper _userHelper;
+        private readonly IMailHelper _mailHelper;
         private readonly IConfiguration _configuration;
         private readonly ICountryRepository _countryRepository;
 
         public AccountController(
             IUserHelper userHelper,
-            
+            IMailHelper mailHelper,
             IConfiguration configuration,
             ICountryRepository countryRepository)
         {
             _userHelper = userHelper;
+            _mailHelper = mailHelper;
             _configuration = configuration;
             _countryRepository = countryRepository;
         }
@@ -103,40 +104,31 @@ namespace WaterCompany.Controllers
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
                     {
-                        ModelState.AddModelError(string.Empty, "The user couldn't be created!");
+                        ModelState.AddModelError(string.Empty, "The user couldn't be created.");
                         return View(model);
                     }
 
-                    var LoginViewModel = new LoginViewModel
+                    string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                    string tokenLink = Url.Action("ConfirmEmail", "Account", new
                     {
-                        UserName = user.UserName,
-                        Password = model.Password,
-                        RememberMe = false,
-                    };
+                        userid = user.Id,
+                        token = myToken
+                    }, protocol: HttpContext.Request.Scheme);
 
-                    var result2 = await _userHelper.LoginAsync(LoginViewModel);
-                    if (result2.Succeeded)
+                    Response response = _mailHelper.SendEmail(model.UserName, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                     $"To allow the user," +
+                     $"please click on this link:<br/><a href=\"{tokenLink}\">Confirm Email</a>");
+
+
+                    if (response.IsSuccess)
                     {
-                        return RedirectToAction("Index", "Home");
+                        ViewBag.Message = "The instructions to allow your user has been sent to email";
+                        return View(model);
                     }
 
                     ModelState.AddModelError(string.Empty, "The user couldn't be logged!");
-
                 }
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors)
-                                                  .Select(e => e.ErrorMessage)
-                                                  .ToList();
-                    // Log ou inspecione esses erros
-                    foreach (var error in errors)
-                    {
-                        Console.WriteLine(error); // Ou use log, ou exiba na View
-                    }
-                }
-
             }
-
             return View(model);
         }
 
@@ -278,6 +270,28 @@ namespace WaterCompany.Controllers
                 }
             }
             return BadRequest();
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userHelper.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                return NotFound();
+            }
+
+            return View();
         }
 
         public IActionResult NotAuthorized()

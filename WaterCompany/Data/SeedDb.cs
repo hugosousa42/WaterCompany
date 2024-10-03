@@ -68,6 +68,8 @@ namespace WaterCompany.Data
                 }
 
                 await _userHelper.AddUserToRoleAsync(user, "Admin");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
             }
 
             var IsInRole = await _userHelper.IsUserInRoleAsyc(user, "Admin");

@@ -1,20 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using WaterCompany.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using WaterCompany.Data.Entities;
-using WaterCompany.Helpers;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WaterCompany.Data;
+using WaterCompany.Data.Entities;
+using WaterCompany.Helpers;
+
 
 namespace WaterCompany
 {
@@ -32,6 +28,8 @@ namespace WaterCompany
         {
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequiredUniqueChars = 0;
@@ -40,35 +38,36 @@ namespace WaterCompany
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequiredLength = 6;
             })
-               .AddEntityFrameworkStores<DataContext>();
-
+            .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<DataContext>();
 
             services.AddAuthentication()
-           .AddCookie()
-           .AddJwtBearer(cfg =>
-            {
-                cfg.TokenValidationParameters = new TokenValidationParameters
+                .AddCookie()
+                .AddJwtBearer(cfg =>
                 {
-                    ValidIssuer = this.Configuration["Tokens:Issuer"],
-                    ValidAudience = this.Configuration["Tokens:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
-                };
-            });
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = this.Configuration["Tokens:Issuer"],
+                        ValidAudience = this.Configuration["Tokens:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                    };
+                });
 
             services.AddDbContext<DataContext>(cfg =>
             {
-
-
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IImageHelper, ImageHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
+
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IBillRepository, BillRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+
 
             services.ConfigureApplicationCookie(options =>
             {
