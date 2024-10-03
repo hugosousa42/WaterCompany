@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace WaterCompany
 {
@@ -39,6 +41,20 @@ namespace WaterCompany
                 cfg.Password.RequiredLength = 6;
             })
                .AddEntityFrameworkStores<DataContext>();
+
+
+            services.AddAuthentication()
+           .AddCookie()
+           .AddJwtBearer(cfg =>
+            {
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = this.Configuration["Tokens:Issuer"],
+                    ValidAudience = this.Configuration["Tokens:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                };
+            });
 
             services.AddDbContext<DataContext>(cfg =>
             {
