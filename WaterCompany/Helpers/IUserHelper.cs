@@ -33,5 +33,9 @@ namespace WaterCompany.Helpers
 
         Task<User> GetUserByIdAsync(string userId);
 
+        Task<string> GeneratePasswordResetTokenAync(User user);
+
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
     }
 }
