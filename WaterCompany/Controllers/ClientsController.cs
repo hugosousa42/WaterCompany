@@ -12,6 +12,7 @@ using WaterCompany.Models;
 
 namespace WaterCompany.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ClientsController : Controller
     {
         private readonly IClientRepository _clientRepository;
@@ -90,7 +91,7 @@ namespace WaterCompany.Controllers
 
 
         // GET: Clients/Edit/5
-        [Authorize]
+   
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -150,7 +151,7 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Delete/5
-        [Authorize]
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -170,7 +171,6 @@ namespace WaterCompany.Controllers
         // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _clientRepository.GetByIdAsync(id);

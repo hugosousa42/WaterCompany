@@ -26,7 +26,9 @@ namespace WaterCompany.Data
             await _context.Database.MigrateAsync();
 
             await _userHelper.CheckRoleAsync("Admin");
-            await _userHelper.CheckRoleAsync("Customer");
+            await _userHelper.CheckRoleAsync("Employee");
+            await _userHelper.CheckRoleAsync("Client");
+
 
             if (!_context.Countries.Any())
             {
@@ -55,7 +57,7 @@ namespace WaterCompany.Data
                     Email = "hugosb9@gmail.com",
                     UserName = "hugosb9@gmail.com",
                     PhoneNumber = "123456789",
-                     Address = "Coimbra Street",
+                    Address = "Coimbra Street",
                     CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().id,
                     City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
                 };
