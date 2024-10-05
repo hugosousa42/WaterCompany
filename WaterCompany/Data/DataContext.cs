@@ -22,6 +22,16 @@ namespace WaterCompany.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Country>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         //Habilitar a regra de apagar em cascata (cascade delete rule)
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

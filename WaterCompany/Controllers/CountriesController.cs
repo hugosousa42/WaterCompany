@@ -1,21 +1,25 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using System;
-using WaterCompany.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Vereyon.Web;
 using WaterCompany.Data;
+using WaterCompany.Data.Entities;
 using WaterCompany.Models;
-using System.Linq;
 
 namespace WaterCompany.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class CountriesController : Controller
     {
+        private readonly IFlashMessage _flashMessage;
         private readonly ICountryRepository _countryRepository;
 
-        public CountriesController(ICountryRepository countryRepository)
+        public CountriesController(
+            IFlashMessage flashMessage,
+            ICountryRepository countryRepository)
         {
+            _flashMessage = flashMessage;
             _countryRepository = countryRepository;
         }
 
@@ -136,8 +140,7 @@ namespace WaterCompany.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception (ex) here
-                    ModelState.AddModelError(string.Empty, "An error occurred while creating the country.");
+                    _flashMessage.Danger("This country already exists!");
                 }
             }
             return View(country);
@@ -189,7 +192,7 @@ namespace WaterCompany.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-       
+
 
     }
 }
