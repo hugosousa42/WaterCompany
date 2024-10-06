@@ -24,10 +24,14 @@ namespace WaterCompany.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.user)
+                .WithOne()
+                .HasForeignKey<Client>(c => c.UserId);
+
             modelBuilder.Entity<Country>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
-
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,9 +1,9 @@
-﻿using WaterCompany.Data;
-using WaterCompany.Models;
+﻿using System;
 using System.Threading.Tasks;
+using WaterCompany.Data;
+using WaterCompany.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace WaterCompany.Controllers
 {

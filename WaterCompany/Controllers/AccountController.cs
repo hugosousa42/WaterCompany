@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
+using Vereyon.Web;
 
 namespace WaterCompany.Controllers
 {
@@ -21,17 +22,20 @@ namespace WaterCompany.Controllers
         private readonly IMailHelper _mailHelper;
         private readonly IConfiguration _configuration;
         private readonly ICountryRepository _countryRepository;
+        private readonly IFlashMessage _flashMessage;
 
         public AccountController(
             IUserHelper userHelper,
             IMailHelper mailHelper,
             IConfiguration configuration,
-            ICountryRepository countryRepository)
+            ICountryRepository countryRepository,
+            IFlashMessage flashMessage)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _configuration = configuration;
             _countryRepository = countryRepository;
+            _flashMessage = flashMessage;
         }
 
         public IActionResult Login()
@@ -101,10 +105,12 @@ namespace WaterCompany.Controllers
                         City = city,
                     };
 
+
+                   
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
                     {
-                        ModelState.AddModelError(string.Empty, "The user couldn't be created.");
+                        _flashMessage.Danger("The user couldn't be created.");
                         return View(model);
                     }
 
@@ -127,8 +133,10 @@ namespace WaterCompany.Controllers
                     }
 
                     ModelState.AddModelError(string.Empty, "The user couldn't be logged!");
+                    return View(model);
                 }
             }
+            _flashMessage.Danger("This user already exists!");
             return View(model);
         }
 
