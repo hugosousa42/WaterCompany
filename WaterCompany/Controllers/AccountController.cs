@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
 using Vereyon.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace WaterCompany.Controllers
 {
@@ -23,19 +24,23 @@ namespace WaterCompany.Controllers
         private readonly IConfiguration _configuration;
         private readonly ICountryRepository _countryRepository;
         private readonly IFlashMessage _flashMessage;
+        private readonly IClientRepository _clientRepository;
 
         public AccountController(
             IUserHelper userHelper,
             IMailHelper mailHelper,
             IConfiguration configuration,
             ICountryRepository countryRepository,
-            IFlashMessage flashMessage)
+            IFlashMessage flashMessage,
+            IClientRepository clientRepository)
+            
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _configuration = configuration;
             _countryRepository = countryRepository;
             _flashMessage = flashMessage;
+            _clientRepository = clientRepository;
         }
 
         public IActionResult Login()
@@ -104,8 +109,6 @@ namespace WaterCompany.Controllers
                         CityId = city.id,
                         City = city,
                     };
-
-
                    
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
@@ -113,6 +116,18 @@ namespace WaterCompany.Controllers
                         _flashMessage.Danger("The user couldn't be created.");
                         return View(model);
                     }
+
+                    var client = new Client
+                    {
+                        Name = model.FirstName,
+                        Email = model.UserName,
+                        PhoneNumber = model.PhoneNumber,
+                        Address = model.Address,   
+                        user = user,
+                    };
+
+                    await _clientRepository.CreateAsync(client);
+                           
 
                     string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
                     string tokenLink = Url.Action("ConfirmEmail", "Account", new

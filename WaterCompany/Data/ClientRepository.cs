@@ -15,18 +15,6 @@ namespace WaterCompany.Data
             _context = context;
         }
 
-        public async Task AssociateUserToClientAsync(int userId, int clientId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            var client = await _context.Clients.FindAsync(clientId);
-
-            if (user != null && client != null)
-            {
-                client.user = user;
-                await _context.SaveChangesAsync();
-            }
-        }
-
         public IQueryable GetAllWithUsers()
         {
             return _context.Clients.Include(p => p.user);

@@ -10,7 +10,7 @@ using WaterCompany.Data;
 namespace WaterCompany.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241006210054_AddUserToClient")]
+    [Migration("20241006214302_AddUserToClient")]
     partial class AddUserToClient
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
