@@ -32,7 +32,7 @@ namespace WaterCompany.Data
 
             if (!_context.Countries.Any())
             {
-                var cities = new List<City>()
+                var portugalCities = new List<City>()
                 {
                     new City { Name = "Lisboa" },
                     new City { Name = "Porto" },
@@ -40,17 +40,28 @@ namespace WaterCompany.Data
                 };
                 _context.Countries.Add(new Country
                 {
-                    Cities = cities,
+                    Cities = portugalCities,
                     Name = "Portugal"
+                });
+                var spainCities = new List<City>()
+                {
+                    new City { Name = "Barcelona" },
+                    new City { Name = "Salamanca" },
+                    new City { Name = "Madrid" }
+                };
+                _context.Countries.Add(new Country
+                {
+                    Cities = spainCities,
+                    Name = "Spain"
                 });
 
                 await _context.SaveChangesAsync();
             }
 
-            var user = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
-            if (user == null)
+            var userAdmin = await _userHelper.GetUserByEmailAsync("hugosb9@gmail.com");
+            if (userAdmin == null)
             {
-                user = new User
+                userAdmin = new User
                 {
                     FirstName = "Hugo",
                     LastName = "Sousa",
@@ -62,31 +73,93 @@ namespace WaterCompany.Data
                     City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
                 };
 
-                var result = await _userHelper.AddUserAsync(user, "123456");
+                var result = await _userHelper.AddUserAsync(userAdmin, "123456");
 
                 if (result != IdentityResult.Success)
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
 
-                await _userHelper.AddUserToRoleAsync(user, "Admin");
-                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                await _userHelper.ConfirmEmailAsync(user, token);
+                await _userHelper.AddUserToRoleAsync(userAdmin, "Admin");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(userAdmin);
+                await _userHelper.ConfirmEmailAsync(userAdmin, token);
             }
 
-            var IsInRole = await _userHelper.IsUserInRoleAsyc(user, "Admin");
-            if (!IsInRole)
+            var IsAdminInRole = await _userHelper.IsUserInRoleAsyc(userAdmin, "Admin");
+            if (!IsAdminInRole)
             {
-                await _userHelper.AddUserToRoleAsync(user, "Admin");
+                await _userHelper.AddUserToRoleAsync(userAdmin, "Admin");
+            }
+
+            var userEmployee = await _userHelper.GetUserByEmailAsync("John@gmail.com");
+            if (userEmployee == null)
+            {
+                userEmployee = new User
+                {
+                    FirstName = "John",
+                    LastName = "Lennon",
+                    Email = "john@gmail.com",
+                    UserName = "john@gmail.com",
+                    PhoneNumber = "123456789",
+                    Address = "Lisbon Street",
+                    CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
+                };
+
+                var result = await _userHelper.AddUserAsync(userEmployee, "123456");
+
+                if (result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create the user in seeder");
+                }
+
+                await _userHelper.AddUserToRoleAsync(userEmployee, "Employee");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(userEmployee);
+                await _userHelper.ConfirmEmailAsync(userEmployee, token);
+            }
+
+            var IsEmployeeInRole = await _userHelper.IsUserInRoleAsyc(userEmployee, "Employee");
+            if (!IsEmployeeInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(userEmployee, "Employee");
+            }
+
+            var userClient = await _userHelper.GetUserByEmailAsync("marie@gmail.com");
+            if (userClient == null)
+            {
+                userClient = new User
+                {
+                    FirstName = "Marie",
+                    LastName = "Curie",
+                    Email = "marie@gmail.com",
+                    UserName = "marie@gmail.com",
+                    PhoneNumber = "123456789",
+                    Address = "Porto Street",
+                    CityId = _context.Countries.FirstOrDefault().Cities.FirstOrDefault().id,
+                    City = _context.Countries.FirstOrDefault().Cities.FirstOrDefault()
+                };
+
+                var result = await _userHelper.AddUserAsync(userClient, "123456");
+
+                if (result != IdentityResult.Success)
+                {
+                    throw new InvalidOperationException("Could not create the user in seeder");
+                }
+
+                await _userHelper.AddUserToRoleAsync(userClient, "Client");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(userClient);
+                await _userHelper.ConfirmEmailAsync(userClient, token);
+            }
+
+            var IsClientInRole = await _userHelper.IsUserInRoleAsyc(userClient, "Client");
+            if (!IsClientInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(userClient, "Client");
             }
 
             if (!_context.Clients.Any())
             {
-                AddClient("John", user);
-                AddClient("Marie", user);
-                AddClient("Sarah", user);
-                AddClient("Paul", user);
-                AddClient("Andrew", user);
+                AddClient("Marie", userClient);
 
                 await _context.SaveChangesAsync();
             }
