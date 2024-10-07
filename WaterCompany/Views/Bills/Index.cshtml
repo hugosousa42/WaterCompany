@@ -12,12 +12,9 @@
 <table class="table">
     <thead>
         <tr>
-            @if (this.User.IsInRole("Admin"))
-            {
-                <th>
-                    @Html.DisplayNameFor(model => model.User.FullName)
-                </th>
-            }
+            <th>
+                Client Name
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.DateOfIssueLocal)
             </th>
@@ -37,12 +34,12 @@
         @foreach (var item in Model)
         {
             <tr>
-                @if (User.IsInRole("Admin"))
-                {
-                    <th>
-                        @Html.DisplayFor(modelItem => item.User.FullName)
-                    </th>
-                }
+                <td>
+                    @if (item.Items.Any())
+                    {
+                        <p>@item.Items.First().Client.Name</p>
+                    }
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateOfIssueLocal)
                 </td>
