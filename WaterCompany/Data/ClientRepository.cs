@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using WaterCompany.Data;
-using WaterCompany.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using WaterCompany.Data.Entities;
 
 namespace WaterCompany.Data
 {
@@ -19,6 +19,14 @@ namespace WaterCompany.Data
         {
             return _context.Clients.Include(p => p.user);
         }
+
+        public async Task<Client> GetClientByUserAsync(string userId)
+        {
+            return await _context.Clients
+                .Include(c => c.user)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
 
         public IEnumerable<SelectListItem> GetComboClients()
         {

@@ -29,7 +29,18 @@ namespace WaterCompany.Data.Entities
        
         public DateTime Birthdate { get; set; }
 
-        public User user { get; set; }
+        [Required]
+        private User _user;
+        public User user
+        {
+            get { return _user; }
+            set
+            {
+                _user = value;
+                UserId = value?.Id;
+            }
+        }
+        public string UserId { get; set; }
 
         public string ImageFullPath
         {

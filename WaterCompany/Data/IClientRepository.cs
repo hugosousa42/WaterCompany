@@ -2,13 +2,16 @@
 using System.Linq;
 using WaterCompany.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Threading.Tasks;
 
 namespace WaterCompany.Data
 {
     public interface IClientRepository : IGenericRepository<Client>
-    {
-        public IQueryable GetAllWithUsers();
+    {     
+        Task<Client> GetClientByUserAsync(string userId);
 
+        public IQueryable GetAllWithUsers();
+        
         IEnumerable<SelectListItem> GetComboClients();
     }
 }
