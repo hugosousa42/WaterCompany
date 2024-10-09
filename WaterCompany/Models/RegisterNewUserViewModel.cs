@@ -14,6 +14,13 @@ namespace WaterCompany.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        public IEnumerable<SelectListItem> Roles { get; set; }
+
+        [Display(Name = "Role")]
+        [Required(ErrorMessage = "You must select a Role.")]
+        public string RoleId { get; set; }
+
+
         [Required]
         [DataType(DataType.EmailAddress)]
         public string UserName { get; set; }

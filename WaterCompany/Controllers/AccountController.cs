@@ -19,6 +19,7 @@ namespace WaterCompany.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IConfiguration _configuration;
@@ -27,6 +28,7 @@ namespace WaterCompany.Controllers
         private readonly IClientRepository _clientRepository;
 
         public AccountController(
+            RoleManager<IdentityRole> roleManager,
             IUserHelper userHelper,
             IMailHelper mailHelper,
             IConfiguration configuration,
@@ -35,6 +37,7 @@ namespace WaterCompany.Controllers
             IClientRepository clientRepository)
             
         {
+            _roleManager = roleManager;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _configuration = configuration;
@@ -82,6 +85,7 @@ namespace WaterCompany.Controllers
         {
             var model = new RegisterNewUserViewModel
             {
+                Roles = _userHelper.GetComboRoles(),
                 Countries = _countryRepository.GetComboCountries(),
                 Cities = _countryRepository.GetComboCities(0)
             };
@@ -117,17 +121,36 @@ namespace WaterCompany.Controllers
                         return View(model);
                     }
 
-                    var client = new Client
+                    var role = await _roleManager.FindByIdAsync(model.RoleId);
+                    if (role != null)
                     {
-                        Name = model.FirstName,
-                        Email = model.UserName,
-                        PhoneNumber = model.PhoneNumber,
-                        Address = model.Address,   
-                        user = user,
-                    };
+                        var roleResult = await _userHelper.AddUserToRoleAsync(user, role.Name);
+                        if (!roleResult.Succeeded)
+                        {
+                            _flashMessage.Danger("The user couldn't be added to the role.");
+                            return View(model);
+                        }
 
-                    await _clientRepository.CreateAsync(client);
-                           
+                        if (role.Name == "Client") 
+                        {
+                            var client = new Client
+                            {
+                                Name = model.FirstName,
+                                Email = model.UserName,
+                                PhoneNumber = model.PhoneNumber,
+                                Address = model.Address,
+                                user = user,
+                            };
+
+                            await _clientRepository.CreateAsync(client);
+                        }
+                        
+                    }
+                    else
+                    {
+                        _flashMessage.Danger("Invalid role selected.");
+                        return View(model);
+                    }
 
                     string myToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
                     string tokenLink = Url.Action("ConfirmEmail", "Account", new

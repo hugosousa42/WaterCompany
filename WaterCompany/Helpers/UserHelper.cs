@@ -1,5 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 using WaterCompany.Data.Entities;
 using WaterCompany.Models;
 
@@ -25,9 +30,9 @@ namespace WaterCompany.Helpers
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task AddUserToRoleAsync(User user, string roleName)
+        public async Task<IdentityResult> AddUserToRoleAsync(User user, string roleName)
         {
-            await _userManager.AddToRoleAsync(user, roleName);
+           return await _userManager.AddToRoleAsync(user, roleName);
         }
 
         public async Task<IdentityResult> ChangePasswordAsync(
@@ -63,6 +68,26 @@ namespace WaterCompany.Helpers
         public async Task<string> GeneratePasswordResetTokenAync(User user)
         {
             return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public IEnumerable<SelectListItem> GetComboRoles()
+        {
+
+            var list = _roleManager.Roles.Select(r => new SelectListItem
+            {
+                Text = r.Name,
+                Value = r.Id.ToString()
+
+            }).OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a country)",
+                Value = "0"
+            });
+
+
+            return list;
         }
 
         public async Task<User> GetUserByEmailAsync(string email)
