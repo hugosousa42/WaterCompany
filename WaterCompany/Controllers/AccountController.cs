@@ -7,13 +7,13 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using WaterCompany.Data.Entities;
-using WaterCompany.Data;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using WaterCompany.Data;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
-using Vereyon.Web;
 using Microsoft.EntityFrameworkCore;
+using Vereyon.Web;
 
 namespace WaterCompany.Controllers
 {

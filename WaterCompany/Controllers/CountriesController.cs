@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vereyon.Web;
+using Microsoft.EntityFrameworkCore;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
 using WaterCompany.Models;
+using Vereyon.Web;
 
 namespace WaterCompany.Controllers
 {
@@ -35,9 +36,24 @@ namespace WaterCompany.Controllers
             {
                 return NotFound();
             }
+            try
+            {
+                var countryId = await _countryRepository.DeleteCityAsync(city);
+                return this.RedirectToAction($"Details", new { id = countryId });
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"{city.Name} is probably being used!";
+                    ViewBag.ErrorMessage = $"{city.Name} cannot be deleted as there are users using it.</br></br>" +
+                    $"Try deleting all the users that are using it first, " +
+                    $"and then try deleting it again.";
+                }
 
-            var countryId = await _countryRepository.DeleteCityAsync(city);
-            return this.RedirectToAction($"Details", new { id = countryId });
+                return View("Error");
+            }
+            
         }
 
         public async Task<IActionResult> EditCity(int? id)
@@ -188,8 +204,25 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
-            await _countryRepository.DeleteAsync(country);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                await _countryRepository.DeleteAsync(country);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"{country.Name} is probably being used!";
+                    ViewBag.ErrorMessage = $"{country.Name} cannot be deleted as there are users using it.</br></br>" +
+                    $"Try deleting all the users that are using it first, " +
+                    $"and then try deleting it again.";
+                }
+
+                return View("Error");
+            }
+
+           
         }
 
 

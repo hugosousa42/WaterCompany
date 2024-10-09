@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using WaterCompany.Data;
-using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
 
@@ -91,7 +87,7 @@ namespace WaterCompany.Controllers
 
 
         // GET: Clients/Edit/5
-   
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -115,7 +111,7 @@ namespace WaterCompany.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit( ClientViewModel model)
+        public async Task<IActionResult> Edit(ClientViewModel model)
         {
 
             if (ModelState.IsValid)
@@ -151,7 +147,7 @@ namespace WaterCompany.Controllers
         }
 
         // GET: Clients/Delete/5
-        
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -191,7 +187,7 @@ namespace WaterCompany.Controllers
 
                 return View("Error");
             }
-        
+
         }
 
         public IActionResult ClientNotFound()
