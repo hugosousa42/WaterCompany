@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WaterCompany.Data.Entities;
 using WaterCompany.Models;
 
@@ -21,7 +23,7 @@ namespace WaterCompany.Helpers
 
         Task CheckRoleAsync(string roleName);
 
-        Task AddUserToRoleAsync(User user, string roleName);
+        Task<IdentityResult> AddUserToRoleAsync(User user, string roleName);
 
         Task<bool> IsUserInRoleAsyc(User user, string roleName);
 
@@ -36,6 +38,8 @@ namespace WaterCompany.Helpers
         Task<string> GeneratePasswordResetTokenAync(User user);
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
+        IEnumerable<SelectListItem> GetComboRoles();
 
     }
 }
