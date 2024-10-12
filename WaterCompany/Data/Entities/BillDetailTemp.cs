@@ -8,7 +8,8 @@ namespace WaterCompany.Data.Entities
 
         [Required]
         public User User { get; set; }
-
+       
+       
         [Required]
         public Client Client { get; set; }
 
