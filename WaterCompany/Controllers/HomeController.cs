@@ -21,6 +21,26 @@ namespace WaterCompany.Controllers
         public IActionResult Index()
         {
             return View();
+        }   
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Service()
+        {
+            return View();
+        }
+
+        public IActionResult WhyUs()
+        {
+            return View();
+        }
+
+        public IActionResult Team()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

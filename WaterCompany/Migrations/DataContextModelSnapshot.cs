@@ -208,7 +208,7 @@ namespace WaterCompany.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("Clientid")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -222,7 +222,8 @@ namespace WaterCompany.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("Clientid");
+                    b.HasIndex("ClientId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -469,7 +470,9 @@ namespace WaterCompany.Migrations
                 {
                     b.HasOne("WaterCompany.Data.Entities.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("Clientid");
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WaterCompany.Data.Entities.User", "User")
                         .WithMany()
