@@ -176,5 +176,10 @@ namespace WaterCompany.Data
         {
             return await _context.Bills.FindAsync(id);
         }
+
+        public IQueryable GetAllBills()
+        {
+            return _context.Bills.Include(b => b.User);
+        }
     }
 }

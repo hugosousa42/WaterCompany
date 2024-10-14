@@ -23,5 +23,7 @@ namespace WaterCompany.Data
 
         Task<Bill> GetBillAsync(int id);
 
+        public IQueryable GetAllBills();
+
     }
 }
