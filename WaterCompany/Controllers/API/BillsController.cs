@@ -20,7 +20,7 @@ namespace WaterCompany.Controllers.API
         [HttpGet]
         public IActionResult GetBills()
         {
-            return Ok(_billRepository.GetAllBills());
+            return Ok(_billRepository.GetLastBillPaidInCash());
         }
     }
 }

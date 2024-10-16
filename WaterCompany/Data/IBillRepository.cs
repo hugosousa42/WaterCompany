@@ -29,10 +29,9 @@ namespace WaterCompany.Data
 
         Task<BillDetailTemp> GetBillDetailTempByIdAsync(int id);
 
-
         Task<Bill> GetBillAsync(int id);
 
-        public IQueryable GetAllBills();
+        public Bill GetLastBillPaidInCash();
 
     }
 }
