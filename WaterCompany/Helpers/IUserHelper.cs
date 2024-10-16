@@ -41,5 +41,7 @@ namespace WaterCompany.Helpers
 
         IEnumerable<SelectListItem> GetComboRoles();
 
+        IEnumerable<SelectListItem> GetComboUsers();
+
     }
 }

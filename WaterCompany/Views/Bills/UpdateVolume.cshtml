@@ -1,0 +1,18 @@
+﻿@model WaterCompany.Data.Entities.BillDetailTemp
+
+@{
+    ViewData["Title"] = "UpdateVolume";
+}
+
+<h1>UpdateVolume</h1>
+
+<form asp-action="UpdateVolume" method="post">
+    <input type="hidden" name="id" value="@Model.id" />
+
+    <div class="form-group">
+        <label for="volume">Volume (m³):</label>
+        <input type="number" name="volume" step="0.01" class="form-control" value="@Model.Volume" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Volume</button>
+</form>

@@ -4,17 +4,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WaterCompany.Models
 {
-    public class AddItemViewModel
+    public class AddUserViewModel
     {
         [Display(Name = "Client")]
-        [Range(1, int.MaxValue, ErrorMessage = "You must select a client.")]
-        public int ClienttId { get; set; }
-
+        [Required(ErrorMessage = "You must select a client.")]
+        public string UserId { get; set; }
 
         [Range(0.0001, double.MaxValue, ErrorMessage = "The volume must be a positive number.")]
         public double Volume { get; set; }
 
-
-        public IEnumerable<SelectListItem> Clients { get; set; }
+        public IEnumerable<SelectListItem> Users { get; set; }
     }
 }

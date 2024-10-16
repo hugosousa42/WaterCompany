@@ -1,0 +1,51 @@
+﻿@model IEnumerable<WaterCompany.Data.Entities.BillDetailTemp>
+
+@{
+    ViewData["Title"] = "CreateClient";
+}
+
+
+<h2>Create Bill</h2>
+<p>
+    <a asp-action="AddVolume" class="btn btn-success">Add Consumption</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().User.FullName)
+            </th>
+            <th>
+                User name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Volume)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Value)
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.User.UserName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Volume)</td>
+                <td>@Html.DisplayFor(modelItem => item.Value)</td>
+                <td>
+                    <a asp-action="ConfirmBill" asp-route-email="@item.User.Email" class="btn btn-primary">Confirm</a>
+                    <a asp-action="ConsumptionDetails" asp-route-id="@item.id" class="btn btn-info">Details</a>
+                    <a asp-action="DeleteItem" asp-route-id="@item.id" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

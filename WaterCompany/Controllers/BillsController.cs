@@ -4,6 +4,9 @@ using WaterCompany.Data;
 using WaterCompany.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using WaterCompany.Data.Entities;
+using WaterCompany.Helpers;
 
 namespace WaterCompany.Controllers
 {
@@ -12,46 +15,142 @@ namespace WaterCompany.Controllers
     {
         private readonly IBillRepository _billRepository;
         private readonly IClientRepository _clientRepository;
+        private readonly IUserHelper _userHelper;
 
-        public BillsController(IBillRepository billRepository, IClientRepository clientRepository)
+        public BillsController(
+            IBillRepository billRepository,
+            IClientRepository clientRepository,
+            IUserHelper userHelper)
         {
             _billRepository = billRepository;
             _clientRepository = clientRepository;
+            _userHelper = userHelper;
         }
         public async Task<IActionResult> Index()
         {
-            var model = await _billRepository.GetBillAsync(this.User.Identity.Name);
+            IQueryable<Bill> model;
+
+            if (User.IsInRole("Admin"))
+            {
+                model = await _billRepository.GetAllBillsAsync(); // Retorna todas as faturas
+            }
+            else
+            {
+                model = await _billRepository.GetBillAsync(this.User.Identity.Name); // Retorna as faturas do usuário
+            }
+
             return View(model);
         }
+
+        public async Task<IActionResult> ConfirmBill(string email)
+        {
+            var response = await _billRepository.ConfirmBillAsync(email);
+
+            if (response)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Create");
+        }
+
+        public async Task<IActionResult> ConsumptionDetails(int id)
+        {
+            var detail = await _billRepository.GetBillDetailTempByIdAsync(id);
+
+            if (detail == null)
+            {
+                return NotFound();
+            }
+
+            return View(detail);
+        }
+
+        public async Task<IActionResult> BillDetails(int id)
+        {
+            var bill = await _billRepository.GetBillByIdAsync(id);
+
+            if (bill == null)
+            {
+                return NotFound();
+            }
+
+            return View(bill);
+
+        }
+
 
         public async Task<IActionResult> Create()
         {
             var model = await _billRepository.GetDetailTempsAsync(this.User.Identity.Name);
-            return View(model);
+
+            if (User.IsInRole("Admin"))
+            {
+                var otherModel = await _billRepository.GetAllBillDetailTempsAsync();
+                return View("CreateByEmployee", otherModel);
+            }
+            else
+            {
+                return View("CreateByClient", model);
+            }
         }
 
         public IActionResult AddClient()
         {
-            var model = new AddItemViewModel
+            var model = new AddUserViewModel
             {
                 Volume = 1,
-                Clients = _clientRepository.GetComboClients()
+                Users = _userHelper.GetComboUsers()
             };
-
             return View(model);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddClient(AddItemViewModel model)
+        public async Task<ActionResult> AddClient(AddUserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                await _billRepository.AddItemToBillAsync(model, this.User.Identity.Name);
+                await _billRepository.AddItemToBillAsync(model);
                 return RedirectToAction("Create");
             }
 
             return View(model);
         }
+
+        public async Task<IActionResult> AddVolume()
+        {
+            var userName = this.User.Identity.Name; // Obter o nome do usuário
+
+            // Agora, busque o usuário pelo nome de usuário
+            var user = await _userHelper.GetUserByEmailAsync(userName);
+            var model = new AddVolumeViewModel
+            {
+                UserId = user.Id,
+                Volume = 1
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddVolume(AddVolumeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var newModel = new AddUserViewModel
+                {
+                    UserId = model.UserId,
+                    Volume = model.Volume
+                };
+                // Chama o repositório para adicionar o volume à fatura
+                await _billRepository.AddItemToBillAsync(newModel);
+
+                // Redireciona para a ação "Create" após a adição bem-sucedida
+                return RedirectToAction("Create");
+
+            }
+            return View(model);
+        }
+
 
         public async Task<IActionResult> DeleteItem(int? id)
         {
@@ -61,43 +160,18 @@ namespace WaterCompany.Controllers
             }
 
             await _billRepository.DeleteDetailTempAsync(id.Value);
-            return RedirectToAction("Create");
 
-        }
-
-        public async Task<IActionResult> Increase(int? id)
-        {
-            if (id == null)
+            if (User.IsInRole("Admin"))
             {
-                return NotFound();
+                return RedirectToAction("Create");
+            }
+            else
+            {
+                return RedirectToAction("Create");
             }
 
-            await _billRepository.ModifyBillDetailTempVolumeAsync(id.Value, 1);
-            return RedirectToAction("Create");
+            return RedirectToAction("Index", "Home");
 
-        }
-
-        public async Task<IActionResult> Decrease(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            await _billRepository.ModifyBillDetailTempVolumeAsync(id.Value, -1);
-            return RedirectToAction("Create");
-
-        }
-
-        public async Task<IActionResult> ConfirmBill()
-        {
-            var response = await _billRepository.ConfirmBillAsync(this.User.Identity.Name);
-            if (response)
-            {
-                return RedirectToAction("Index");
-            }
-
-            return RedirectToAction("Create");
         }
 
         public async Task<IActionResult> Pay(int? id)
@@ -107,7 +181,7 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
-            var bill = await _billRepository.GetByIdAsync(id.Value);
+            var bill = await _billRepository.GetBillByIdAsync(id.Value);
             if (bill == null)
             {
                 return NotFound();
@@ -116,7 +190,8 @@ namespace WaterCompany.Controllers
             var model = new PaymentViewModel
             {
                 id = bill.id,
-                PaymentDate = DateTime.Today
+                PaymentDate = DateTime.Today,
+                PaymentMethod = bill.Method
             };
 
             return View(model);
@@ -133,5 +208,37 @@ namespace WaterCompany.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> UpdateVolume(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            var billDetailTemp = await _billRepository.GetBillDetailTempByIdAsync(id.Value);
+
+            if (billDetailTemp == null)
+            {
+                return NotFound();
+            }
+
+
+            return View(billDetailTemp);
+        }
+
+        // POST: UpdateVolume
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVolume(int id, double volume)
+        {
+            // Chama o método para atualizar o volume
+            await _billRepository.ModifyBillDetailTempVolumeAsync(id, volume);
+
+            // Após salvar a atualização, redireciona para outra ação
+            return RedirectToAction("Create");
+        }
+
     }
 }
