@@ -1,21 +1,18 @@
-﻿@model WaterCompany.Models.AddUserViewModel
+﻿@model WaterCompany.Models.AddVolumeViewModel
 @{
-    ViewData["Title"] = "AddClient";
+    ViewData["Title"] = "AddVolume";
 }
 
-<h2>Add Client</h2>
+<h1>AddVolume</h1>
+
 
 <h4>To Bill</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddClient" method="post">
+        <form asp-action="AddVolume" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" asp-items="Model.Users" class="form-control"></select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="UserId" />
             <div class="form-group">
                 <label asp-for="Volume" class="control-label"></label>
                 <input asp-for="Volume" class="form-control" />

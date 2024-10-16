@@ -90,6 +90,23 @@ namespace WaterCompany.Helpers
             return list;
         }
 
+        public IEnumerable<SelectListItem> GetComboUsers()
+        {
+            var list = _userManager.Users.Select(c => new SelectListItem
+            {
+                Text = c.FirstName + " " + c.LastName + " " + c.UserName,
+                Value = c.Id.ToString()
+            }).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Select a user)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);

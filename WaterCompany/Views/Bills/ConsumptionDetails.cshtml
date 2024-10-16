@@ -1,0 +1,59 @@
+﻿@model WaterCompany.Data.Entities.BillDetailTemp
+
+@{
+    ViewData["Title"] = "ConsumptionDetails";
+}
+
+<h2>Consumption Details</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tier</th>
+            <th>Limit (m³)</th>
+            <th>Unit Price (€)</th>
+            <th>Consumed Volume (m³)</th>
+            <th>Final Price (€)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1st tier</td>
+            <td>up to 5 m³</td>
+            <td>0.30 €</td>
+            <td>@(Model.Volume > 5 ? 5 : Model.Volume) m³</td>
+            <td>@(Model.Volume > 5 ? (decimal)5 * 0.30m : (decimal)Model.Volume * 0.30m) €</td>
+        </tr>
+        <tr>
+            <td>2nd tier</td>
+            <td>Between 5 m³ and 15 m³</td>
+            <td>0.80 €</td>
+            <td>@(Model.Volume > 5 ? (Model.Volume > 15 ? 10 : Model.Volume - 5) : 0) m³</td>
+            <td>@(Model.Volume > 5 ? (Model.Volume > 15 ? (decimal)10 * 0.80m : (decimal)(Model.Volume - 5) * 0.80m) : 0) €</td>
+        </tr>
+        <tr>
+            <td>3rd tier</td>
+            <td>Between 15 m³ and 25 m³</td>
+            <td>1.20 €</td>
+            <td>@(Model.Volume > 15 ? (Model.Volume > 25 ? 10 : Model.Volume - 15) : 0) m³</td>
+            <td>@(Model.Volume > 15 ? (Model.Volume > 25 ? (decimal)10 * 1.20m : (decimal)(Model.Volume - 15) * 1.20m) : 0) €</td>
+        </tr>
+        <tr>
+            <td>4th tier</td>
+            <td>Above 25 m³</td>
+            <td>1.60 €</td>
+            <td>@(Model.Volume > 25 ? Model.Volume - 25 : 0) m³</td>
+            <td>@(Model.Volume > 25 ? (decimal)(Model.Volume - 25) * 1.60m : 0) €</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>Total: </strong> @Model.Value €</p>
+
+<br />
+<br />
+<p>
+    <a asp-action="UpdateVolume" asp-route-id="@Model.id" class="btn btn-primary">Edit</a>
+
+    <a asp-action="Create" class="btn btn-danger">Back</a>
+</p>

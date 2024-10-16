@@ -8,18 +8,10 @@ namespace WaterCompany.Data.Entities
 
         [Required]
         public User User { get; set; }
-       
-       
-        [Required]
-        public Client Client { get; set; }
 
 
         [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = false)]
         public double Volume { get; set; }
-
-
-        [DisplayFormat(DataFormatString = "{0:F2}", ApplyFormatInEditMode = false)]
-        public decimal Price { get; set; }
 
         public decimal Value => CalculateValue();
 

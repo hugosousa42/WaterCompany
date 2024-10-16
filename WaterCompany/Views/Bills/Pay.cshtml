@@ -23,6 +23,13 @@
                 <span asp-validation-for="PaymentDate" class="text-danger"></span>
             </div>
 
+
+            <div class="form-group">
+                <label asp-for="PaymentMethod" class="control-label"></label>
+                <select asp-for="PaymentMethod" class="form-control" asp-items="Html.GetEnumSelectList<WaterCompany.Models.PaymentMethod>()"></select>
+                <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-success">Back to List</a>
