@@ -208,16 +208,16 @@ namespace WaterCompany.Data
            .FirstOrDefaultAsync(b => b.id == id);
         }
 
-        public Bill GetLastBillPaidInCash()
+        public Bill GetLastBillToPay(string userId)
         {
             return _context.Bills
          .Include(b => b.User)
          .Include(b => b.Items)
-         .Where(b => b.Method == PaymentMethod.Cash && b.PaymentDate != null)
-         .OrderByDescending(b => b.PaymentDate)
-         .ThenByDescending(b => b.DateOfIssue)
+         .Where(b => b.Method == PaymentMethod.NotPaid && b.DateOfIssue != null && b.User.Id == userId) 
+         .OrderByDescending(b => b.DateOfIssue)
          .FirstOrDefault();
         }
     }
+    
 }
 

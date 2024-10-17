@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using WaterCompany.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WaterCompany.Data;
 
 namespace WaterCompany.Controllers.API
 {
@@ -17,10 +17,10 @@ namespace WaterCompany.Controllers.API
             _billRepository = billRepository;
         }
 
-        [HttpGet]
-        public IActionResult GetBills()
+        [HttpGet("last-bill/{userId}")]
+        public IActionResult GetBill(string userId)
         {
-            return Ok(_billRepository.GetLastBillPaidInCash());
+            return Ok(_billRepository.GetLastBillToPay(userId));
         }
     }
 }

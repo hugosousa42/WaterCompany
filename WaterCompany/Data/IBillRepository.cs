@@ -31,7 +31,7 @@ namespace WaterCompany.Data
 
         Task<Bill> GetBillAsync(int id);
 
-        public Bill GetLastBillPaidInCash();
+        Bill GetLastBillToPay(string userId);
 
     }
 }
