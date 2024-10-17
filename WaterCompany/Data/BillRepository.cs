@@ -217,6 +217,27 @@ namespace WaterCompany.Data
          .OrderByDescending(b => b.DateOfIssue)
          .FirstOrDefault();
         }
+
+        public async Task DeleteBillAsync(int id)
+        {
+            var bill = await _context.Bills
+           .Include(b => b.Items) // Certifique-se de incluir os detalhes da fatura
+           .FirstOrDefaultAsync(b => b.id == id);
+
+            if (bill == null)
+            {
+                return;
+            }
+
+            if (bill.Items != null && bill.Items.Any())
+            {
+                _context.BillDetails.RemoveRange(bill.Items);
+            }
+
+            _context.Bills.Remove(bill);
+            await _context.SaveChangesAsync();
+
+        }
     }
     
 }

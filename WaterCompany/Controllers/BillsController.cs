@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
 namespace WaterCompany.Controllers
 {
@@ -151,6 +152,12 @@ namespace WaterCompany.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> DeleteBill(int id)
+        {
+            await _billRepository.DeleteBillAsync(id);
+
+            return RedirectToAction("Index");
+        }
 
         public async Task<IActionResult> DeleteItem(int? id)
         {

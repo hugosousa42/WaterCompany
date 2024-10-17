@@ -33,5 +33,7 @@ namespace WaterCompany.Data
 
         Bill GetLastBillToPay(string userId);
 
+        Task DeleteBillAsync(int id);
+
     }
 }
