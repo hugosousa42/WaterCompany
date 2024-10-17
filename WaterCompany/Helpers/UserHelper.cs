@@ -107,6 +107,12 @@ namespace WaterCompany.Helpers
             return list;
         }
 
+        public async Task<string> GetRoleAsync(User user)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.FirstOrDefault();
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);

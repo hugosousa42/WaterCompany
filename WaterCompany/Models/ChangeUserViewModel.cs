@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace WaterCompany.Models
@@ -32,5 +33,24 @@ namespace WaterCompany.Models
         public int CountryId { get; set; }
 
         public IEnumerable<SelectListItem> Countries { get; set; }
+
+        [Display(Name = "Profile Picture")]
+        public IFormFile ImageFile { get; set; }
+
+        public string ImageUrl { get; set; }
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageUrl))
+                {
+                    return null;
+                }
+
+                return $"https://localhost:44382{ImageUrl.Substring(1)}";
+            }
+        }
+
     }
 }

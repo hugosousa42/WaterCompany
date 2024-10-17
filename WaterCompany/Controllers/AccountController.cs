@@ -1,19 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using WaterCompany.Data.Entities;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
+using Vereyon.Web;
 using WaterCompany.Data;
+using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
-using Microsoft.EntityFrameworkCore;
-using Vereyon.Web;
 
 namespace WaterCompany.Controllers
 {
@@ -26,6 +25,7 @@ namespace WaterCompany.Controllers
         private readonly ICountryRepository _countryRepository;
         private readonly IFlashMessage _flashMessage;
         private readonly IClientRepository _clientRepository;
+        private readonly IImageHelper _imageHelper;
 
         public AccountController(
             RoleManager<IdentityRole> roleManager,
@@ -34,8 +34,9 @@ namespace WaterCompany.Controllers
             IConfiguration configuration,
             ICountryRepository countryRepository,
             IFlashMessage flashMessage,
-            IClientRepository clientRepository)
-            
+            IClientRepository clientRepository,
+            IImageHelper imageHelper)
+
         {
             _roleManager = roleManager;
             _userHelper = userHelper;
@@ -44,6 +45,7 @@ namespace WaterCompany.Controllers
             _countryRepository = countryRepository;
             _flashMessage = flashMessage;
             _clientRepository = clientRepository;
+            _imageHelper = imageHelper;
         }
 
         public IActionResult Login()
@@ -112,8 +114,9 @@ namespace WaterCompany.Controllers
                         Address = model.Address,
                         CityId = city.id,
                         City = city,
+                        ImageUrl = "noimage"
                     };
-                   
+
                     var result = await _userHelper.AddUserAsync(user, model.Password);
                     if (result != IdentityResult.Success)
                     {
@@ -131,7 +134,7 @@ namespace WaterCompany.Controllers
                             return View(model);
                         }
 
-                        if (role.Name == "Client") 
+                        if (role.Name == "Client")
                         {
                             var client = new Client
                             {
@@ -144,7 +147,7 @@ namespace WaterCompany.Controllers
 
                             await _clientRepository.CreateAsync(client);
                         }
-                        
+
                     }
                     else
                     {
@@ -188,6 +191,7 @@ namespace WaterCompany.Controllers
                 model.LastName = user.LastName;
                 model.Address = user.Address;
                 model.PhoneNumber = user.PhoneNumber;
+                model.ImageUrl = user.ImageUrl;
 
                 var city = await _countryRepository.GetCityAsync(user.CityId);
                 if (city != null)
@@ -226,6 +230,16 @@ namespace WaterCompany.Controllers
                     user.PhoneNumber = model.PhoneNumber;
                     user.CityId = model.CityId;
                     user.City = city;
+
+                    var userRole = await _userHelper.GetRoleAsync(user);
+
+                    if (model.ImageFile != null && model.ImageFile.Length > 0)
+                    {
+                        var imagePath = await _imageHelper.UploadImageAsync(model.ImageFile, userRole);
+                        user.ImageUrl = imagePath;
+                    }
+
+                    model.ImageUrl = user.ImageUrl;
 
                     var response = await _userHelper.UpdateUserAsync(user);
 

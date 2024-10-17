@@ -14,6 +14,7 @@ namespace WaterCompany.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+
         public IEnumerable<SelectListItem> Roles { get; set; }
 
         [Display(Name = "Role")]
