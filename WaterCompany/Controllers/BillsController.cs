@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.EntityFrameworkCore;
 
 namespace WaterCompany.Controllers
 {
@@ -154,10 +155,47 @@ namespace WaterCompany.Controllers
 
         public async Task<IActionResult> DeleteBill(int id)
         {
-            await _billRepository.DeleteBillAsync(id);
+            if (id == null)
+            {
+                return NotFound();
+            }          
+
+            try
+            {
+                await _billRepository.DeleteBillAsync(id);
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("DELETE"))
+                {
+                    ViewBag.ErrorTitle = $"The bill probably have details associated!";
+                    ViewBag.ErrorMessage = $"The bill cannot be deleted as there are details associated.</br></br>" +
+                                           $"Try deleting all the details in the Bill Details page first, " +
+                                           $"and then try deleting it again.";
+                }
+
+                return View("Error");
+            }
+        }
+
+        public async Task<IActionResult> DeleteBillItems(int id)
+        {
+            var bill = await _billRepository.GetBillByIdAsync(id);
+
+            if (bill == null)
+            {
+                return NotFound();
+            }
+
+            if (bill.Items != null && bill.Items.Any())
+            {
+                await _billRepository.DeleteBillItemsAsync(bill.id);
+            }
 
             return RedirectToAction("Index");
         }
+
 
         public async Task<IActionResult> DeleteItem(int? id)
         {

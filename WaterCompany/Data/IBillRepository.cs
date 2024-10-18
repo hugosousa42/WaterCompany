@@ -35,5 +35,7 @@ namespace WaterCompany.Data
 
         Task DeleteBillAsync(int id);
 
+        Task DeleteBillItemsAsync(int id);
+
     }
 }

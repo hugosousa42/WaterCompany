@@ -86,5 +86,15 @@
 <br />
 
 <p>
-    <a asp-action="Index" class="btn btn-danger">Back</a>
+    @if (this.User.IsInRole("Admin"))
+    {
+        <th>
+            <a asp-action="DeleteBillItems" asp-route-id="@Model.id" class="btn btn-danger">Delete Details</a>
+        </th>
+    }
+    <a asp-action="Index" class="btn btn-primary">Back</a>
 </p>
+
+
+
+
