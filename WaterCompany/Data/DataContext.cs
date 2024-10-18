@@ -17,6 +17,9 @@ namespace WaterCompany.Data
         public DbSet<Country> Countries { get; set; }
 
         public DbSet<City> Cities { get; set; }
+        
+        public DbSet<MeterRequest> MeterRequests { get; set; }
+
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

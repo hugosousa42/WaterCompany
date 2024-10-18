@@ -1,0 +1,44 @@
+﻿@model IEnumerable<WaterCompany.Data.Entities.MeterRequest>
+
+@{
+    ViewData["Title"] = "Unprocessed Meter Requests";
+}
+
+
+<br />
+<br />
+
+<h1> Meter Requests</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>City</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.FirstName</td>
+                <td>@request.LastName</td>
+                <td>@request.Email</td>
+                <td>@request.Address</td>
+                <td>@request.PhoneNumber</td>
+                <td>@request.City.Name</td>
+                <td>
+                    <form asp-action="RequestToAdmin" method="post">
+                        <input type="hidden" name="id" value="@request.id" />
+                        <button type="submit" class="btn btn-success">Mark as Processed</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,22 +1,18 @@
-﻿@model WaterCompany.Models.RegisterNewUserViewModel
-
+﻿@model WaterCompany.Models.MeterRequestViewModel
 @{
     ViewData["Title"] = "Register";
 }
 
-<h1>Register</h1>
+</<br />
+</<br />
+
+<h1>Request Water Meter</h1>
 <flash dismissable="true" />
 <div class="row">
     <div class="col-md-4 offset-md-4">
-        <formm asp-action="Index" method="post">
+        <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" asp-items="Model.Roles" class="form-control"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-
+          
             <div class="form-group">
                 <label asp-for="FirstName">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
@@ -30,9 +26,9 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="UserName">Username</label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-warning"></span>
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-warning"></span>
             </div>
 
             <div class="form-group">
@@ -59,20 +55,8 @@
                 <span asp-validation-for="PhoneNumber" class="text-warning"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Password">Password</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-warning"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Confirm">Confirm</label>
-                <input asp-for="Confirm" type="password" class="form-control" />
-                <span asp-validation-for="Confirm" class="text-warning"></span>
-            </div>
-
-            <input type="submit" value="Register New User" class="btn btn-primary" />
-        </formm>
+            <input type="submit" value="Request New Meter" class="btn btn-primary" />
+        </form>
     </div>
 </div>
 

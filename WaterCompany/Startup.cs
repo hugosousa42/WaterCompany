@@ -70,6 +70,7 @@ namespace WaterCompany
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IBillRepository, BillRepository>();
             services.AddScoped<ICountryRepository, CountryRepository>();
+            services.AddScoped<IMeterRequestRepository, MeterRequestRepository>();
 
 
             services.ConfigureApplicationCookie(options =>
