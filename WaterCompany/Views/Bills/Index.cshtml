@@ -4,79 +4,76 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Bills</h1>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css" />
+<br />
+<br />
 
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            @if (this.User.IsInRole("Admin"))
-            {
-                <th>
-                    @Html.DisplayNameFor(model => model.User.FullName)
-                </th>
-            }
-            <th>
-                @Html.DisplayNameFor(model => model.DateOfIssue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PaymentDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Method)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Volume) (m³)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Value) (€)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                @if (User.IsInRole("Admin"))
-                {
-                    <th>
-                        @Html.DisplayFor(modelItem => item.User.FullName)
-                    </th>
-                }
-                <td>
-                    @Html.DisplayFor(modelItem => item.DateOfIssue)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PaymentDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Method)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Volume)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Value)
-                </td>
-                <td>
-                <th>
-                    <a asp-action="Pay" asp-route-id="@item.id" class="btn btn-primary" id="btnDeliver">Pay</a>
-                </th>
-                <th>
-                    <a asp-action="BillDetails" asp-route-id="@item.id" class="btn btn-info">Details</a>
-                </th>
 
-                    @if (this.User.IsInRole("Admin"))
-                    {
-                    <th>
-                        <a asp-action="DeleteBill" asp-route-id="@item.id" class="btn btn-danger" id="btnDelete">Delete</a>
-                    </th>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Bills</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-responsive table-striped" id="MyTable">
+                    <thead>
+                        <tr>
+                            @if (this.User.IsInRole("Employee"))
+                            {
+                                    <th>@Html.DisplayNameFor(model => model.First().User.FullName)</th>
+                            }
+                            <th>@Html.DisplayNameFor(model => model.First().DateOfIssue)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().PaymentDate)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Method)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Volume) (m³)</th>
+                            <th>@Html.DisplayNameFor(model => model.First().Value) (€)</th>
+                            <th>Ações</th> <!-- Adicionado título para ações -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                                <tr>
+                                @if (User.IsInRole("Employee"))
+                                {
+                                            <td>@Html.DisplayFor(modelItem => item.User.FullName)</td>
+                                }
+                                    <td>@Html.DisplayFor(modelItem => item.DateOfIssue)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.PaymentDate)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Method)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Volume)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Value)</td>
+                                    <td>
+                                        <a asp-action="Pay" asp-route-id="@item.id" class="btn btn-primary">Pay</a>
+                                        <a asp-action="BillDetails" asp-route-id="@item.id" class="btn btn-info">Details</a>
+                                    @if (this.User.IsInRole("Employee"))
+                                    {
+                                                <a asp-action="DeleteBill" asp-route-id="@item.id" class="btn btn-danger">Delete</a>
+                                    }
+                                    </td>
+                                </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+        <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#MyTable').DataTable({
+                    "paging": true,
+                    "searching": true 
+                });
+            });
+        </script>
+}

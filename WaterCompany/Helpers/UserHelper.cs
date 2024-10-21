@@ -159,5 +159,16 @@ namespace WaterCompany.Helpers
                 password,
                 false);
         }
+
+        public async Task<IEnumerable<User>> GetUsersByRoleAdminAsync()
+        {
+            return await _userManager.GetUsersInRoleAsync("Admin");
+        }
+
+        public async Task<IEnumerable<User>> GetUsersByRoleEmployeeAsync()
+        {
+            return await _userManager.GetUsersInRoleAsync("Employee");
+        }
+
     }
 }

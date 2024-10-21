@@ -63,7 +63,7 @@ namespace WaterCompany.Controllers
         
         
         [HttpGet]
-        //[Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> EmployeeMeterRequest()
         {
             var meterRequests = await _meterRequestRepository.GetAllUnprocessedAsync();
@@ -71,6 +71,7 @@ namespace WaterCompany.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> RequestToAdmin(int id)
         {
             var meterRequest = await _meterRequestRepository.GetByIdAsync(id);
@@ -85,16 +86,17 @@ namespace WaterCompany.Controllers
             return RedirectToAction("EmployeeMeterRequest");
         }
 
+      
         [HttpGet]
-        //[Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminMeterRequest()
         {
             var meterRequests = await _meterRequestRepository.GetAllNotDeliveredAsync();
             return View(meterRequests);
         }
 
-
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeliverMeter(int id)
         {
             var meterRequest = await _meterRequestRepository.GetByIdAsync(id);

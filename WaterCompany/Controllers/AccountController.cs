@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Vereyon.Web;
 using WaterCompany.Data;
 using WaterCompany.Data.Entities;
@@ -46,6 +46,20 @@ namespace WaterCompany.Controllers
             _flashMessage = flashMessage;
             _clientRepository = clientRepository;
             _imageHelper = imageHelper;
+        }
+
+        public async Task<IActionResult> AllAdminUsers()
+        {
+            var model = await _userHelper.GetUsersByRoleAdminAsync();
+           
+            return View(model);
+        }
+
+        public async Task<IActionResult> AllEmployeeUsers()
+        {
+            var model = await _userHelper.GetUsersByRoleEmployeeAsync();
+
+            return View(model);
         }
 
         public IActionResult Login()
@@ -107,7 +121,7 @@ namespace WaterCompany.Controllers
 
                     user = new User
                     {
-                        FirstName = model.FirstName,
+                        FirstName = model.FirstName, 
                         LastName = model.LastName,
                         Email = model.UserName,
                         UserName = model.UserName,

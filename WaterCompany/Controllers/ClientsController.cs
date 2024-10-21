@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using WaterCompany.Data;
 using WaterCompany.Helpers;
 using WaterCompany.Models;
@@ -38,13 +38,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             return View(client);
@@ -92,13 +92,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             var model = _converterHelper.ToClientViewModel(client);
@@ -152,13 +152,13 @@ namespace WaterCompany.Controllers
         {
             if (id == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             var client = await _clientRepository.GetByIdAsync(id.Value);
             if (client == null)
             {
-                return new NotFoundViewResult("ClientNotFound");
+                return new NotFoundViewResult("Error404");
             }
 
             return View(client);

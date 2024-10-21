@@ -1,39 +1,47 @@
 ﻿@model WaterCompany.Data.Entities.Bill
 
-@{
-    ViewData["Title"] = "BillDetails";
-}
+<br />
+<br />
 
-<h2>Bill Details</h2>
+<h2>Detalhamento da Fatura</h2>
 
+<br />
 
 <table class="table">
     <tr>
-        <th>Issue Date:</th>
+        <th>Data de Emissão:</th>
         <td>@Html.DisplayFor(model => model.DateOfIssue)</td>
     </tr>
     <tr>
-        <th>Payment Date:</th>
+        <th>Data de Pagamento:</th>
         <td>@Html.DisplayFor(model => model.PaymentDate)</td>
     </tr>
     <tr>
-        <th>Client:</th>
+        <th>Cliente:</th>
         <td>@Html.DisplayFor(model => model.User.FullName)</td>
     </tr>
     <tr>
-        <th>Total Volume (m³):</th>
+        <th>Volume Total (m³):</th>
         <td>@Html.DisplayFor(model => model.Volume) </td>
     </tr>
     <tr>
-        <th>Total Amount (€):</th>
+        <th>Valor Total (€):</th>
         <td>@Html.DisplayFor(model => model.Value) €</td>
     </tr>
     <tr>
-        <th>Payment Method:</th>
+        <th>Método de Pagamento:</th>
         <td>@Html.DisplayFor(model => model.Method)</td>
     </tr>
 </table>
 
+<br />
+<br />
+
+<!-- Aqui vamos adicionar o controle de Timeline -->
+<div class="container">
+    <h4>Bill timeline</h4>
+    <div id="ScheduleTimeline"></div>
+</div>
 
 <br />
 <br />
@@ -80,21 +88,48 @@
     </tbody>
 </table>
 
-<p><strong>Total Bill Amount: </strong> @Model.Value.ToString("F2") €</p>
+<p><strong>Valor Total da Fatura: </strong> @Model.Value.ToString("F2") €</p>
 
 <br />
 <br />
 
 <p>
-    @if (this.User.IsInRole("Admin"))
+    @if (this.User.IsInRole("Employee"))
     {
         <th>
-            <a asp-action="DeleteBillItems" asp-route-id="@Model.id" class="btn btn-danger">Delete Details</a>
+            <a asp-action="DeleteBillItems" asp-route-id="@Model.id" class="btn btn-danger">Excluir Detalhes</a>
         </th>
     }
-    <a asp-action="Index" class="btn btn-primary">Back</a>
+    <a asp-action="Index" class="btn btn-primary">Voltar</a>
 </p>
 
-
-
-
+@section Scripts {
+    <!-- Inicialização do controle de Timeline -->
+    <script>
+        var scheduleObj = new ej.schedule.Schedule({
+            height: '650px',
+            currentView: 'TimelineDay',
+            views: ['TimelineDay', 'TimelineWeek', 'TimelineMonth'],
+            selectedDate: new Date(),
+            eventSettings: {
+                dataSource: [
+                    {
+                        Id: 1,
+                        Subject: 'Date Of Issue',
+                        StartTime: new Date('@Model.DateOfIssue.ToString("yyyy-MM-ddTHH:mm:ss")'),
+                        EndTime: new Date('@Model.DateOfIssue.ToString("yyyy-MM-ddTHH:mm:ss")'),
+                        IsAllDay: true
+                    },
+                    {
+                        Id: 2,
+                        Subject: 'Payment Date',
+                        StartTime: new Date('@Model.PaymentDate?.ToString("yyyy-MM-ddTHH:mm:ss")'),
+                        EndTime: new Date('@Model.PaymentDate?.ToString("yyyy-MM-ddTHH:mm:ss")'),
+                        IsAllDay: true
+                    }
+                ]
+            }
+        });
+        scheduleObj.appendTo('#ScheduleTimeline');
+    </script>
+}

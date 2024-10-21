@@ -13,6 +13,8 @@ using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 
 
+
+
 namespace WaterCompany
 {
     public class Startup
@@ -27,6 +29,9 @@ namespace WaterCompany
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBPh8sVXJzS0d+WFlPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9nSH5Rd0VlW39ccnVTQGY=");
+           
+
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
                 cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;

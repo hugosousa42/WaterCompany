@@ -3,12 +3,15 @@
     ViewData["Title"] = "ChangeUser";
 }
 
-<h1>Change User</h1>
+<br />
+<br />
 
 <div class="row">
     <div class="col-md-4 offset-md-4">
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly"></div>
+            <h2>Change User</h2>
+            <br />
 
             <div class="form-group">
                 <label asp-for="FirstName">First Name</label>
@@ -68,6 +71,7 @@
             </div>
 
             <div class="text-success">@ViewBag.UserMessage</div>
+            <br />
         </form>
     </div>
 </div>

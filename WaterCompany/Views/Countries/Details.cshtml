@@ -1,29 +1,22 @@
 ﻿@model WaterCompany.Data.Entities.Country
-
 @{
     ViewData["Title"] = "Details";
 }
 
+<h4>Country Details</h4>
+<hr />
+<dl class="dl-horizontal">
+    <dt>@Html.DisplayNameFor(model => model.Name)</dt>
+    <dd>@Html.DisplayFor(model => model.Name)</dd>
+</dl>
 
-<h2>Details</h2>
-
-<div>
-    <h4>Country</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
-</div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.id" class="btn btn-warning">Edit</a>
     <a asp-action="AddCity" asp-route-id="@Model.id" class="btn btn-info">Add City</a>
     <a asp-action="Index" class="btn btn-success">Back to List</a>
 </div>
+
+<br /><br />
 
 <h4>Cities</h4>
 @if (Model.Cities == null || Model.Cities.Count == 0)
@@ -32,12 +25,10 @@
 }
 else
 {
-    <table class="table">
+    <table class="table table-hover table-responsive table-striped" id="CitiesTable">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cities.FirstOrDefault().Name)
-                </th>
+                <th>@Html.DisplayNameFor(model => model.Cities.FirstOrDefault().Name)</th>
                 <th></th>
             </tr>
         </thead>
@@ -45,12 +36,10 @@ else
             @foreach (var item in Model.Cities.OrderBy(c => c.Name))
             {
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
                     <td id="@item.id">
                         <a asp-action="EditCity" asp-route-id="@item.id" class="btn btn-warning">Edit</a>
-                        <a asp-action="DeleteCity" asp-route-id="@item.id" class="btn btn-danger" id="btnDelete">Delete</a>
+                        <a href="#" class="btn btn-danger btnDeleteCity" data-id="@item.id">Delete</a>
                     </td>
                 </tr>
             }
@@ -58,44 +47,51 @@ else
     </table>
 }
 
-<div id="deleteDialog" class="modal fade">
+<div id="deleteDialogCity" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><i class="fa fa-window-close"></i></button>
-                <h4 class="modal-title">Delete</h4>
+                <h4 class="modal-title">Delete City</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <p>Do you want to delete the city?</p>
+                <p>Do you want to delete this city?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="btnYesDelete">Delete</button>
-                <button type="button" class="btn btn-success" id="btnNoDelete">No</button>
+                <button type="button" class="btn btn-danger" id="btnYesDeleteCity">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            var id = 0;
-            $('a[id*=btnDelete]').click(function () {
-                debugger;
-                id = $(this).parent()[0].id;
-                $("#deleteDialog").modal('show');
-                return false;
+            // Initialize DataTables
+            $('#CitiesTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true
             });
-            $("#btnNoDelete").click(function () {
-                $("#deleteDialog").modal('hide');
-                return false;
+
+            var countryId = 0;
+
+            // Capture the ID of the item to be deleted
+            $('.btnDelete').on('click', function () {
+                countryId = $(this).data('id');
+                $('#deleteDialog').modal('show');
             });
-            $("#btnYesDelete").click(function () {
-                window.location.href = '/Countries/DeleteCity/' + id;
+
+            // Handle the deletion when confirmed
+            $('#btnYesDelete').on('click', function () {
+                window.location.href = '/Countries/Delete/' + countryId;
             });
         });
     </script>

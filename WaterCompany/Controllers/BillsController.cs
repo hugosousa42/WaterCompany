@@ -9,10 +9,13 @@ using WaterCompany.Data.Entities;
 using WaterCompany.Helpers;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using Syncfusion.EJ2.Layouts;
+
 
 namespace WaterCompany.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Employee,Client")]
     public class BillsController : Controller
     {
         private readonly IBillRepository _billRepository;
@@ -32,7 +35,7 @@ namespace WaterCompany.Controllers
         {
             IQueryable<Bill> model;
 
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Employee"))
             {
                 model = await _billRepository.GetAllBillsAsync(); // Retorna todas as faturas
             }
@@ -77,6 +80,8 @@ namespace WaterCompany.Controllers
                 return NotFound();
             }
 
+         
+
             return View(bill);
 
         }
@@ -86,7 +91,7 @@ namespace WaterCompany.Controllers
         {
             var model = await _billRepository.GetDetailTempsAsync(this.User.Identity.Name);
 
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Employee"))
             {
                 var otherModel = await _billRepository.GetAllBillDetailTempsAsync();
                 return View("CreateByEmployee", otherModel);
@@ -206,7 +211,7 @@ namespace WaterCompany.Controllers
 
             await _billRepository.DeleteDetailTempAsync(id.Value);
 
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Employee"))
             {
                 return RedirectToAction("Create");
             }

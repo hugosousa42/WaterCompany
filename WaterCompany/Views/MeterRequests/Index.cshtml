@@ -3,16 +3,17 @@
     ViewData["Title"] = "Register";
 }
 
-</<br />
-</<br />
+<br />
+<br />
 
-<h1>Request Water Meter</h1>
 <flash dismissable="true" />
 <div class="row">
     <div class="col-md-4 offset-md-4">
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-          
+            <h2>Request Water Meter</h2>
+            <br />
+
             <div class="form-group">
                 <label asp-for="FirstName">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
@@ -56,6 +57,7 @@
             </div>
 
             <input type="submit" value="Request New Meter" class="btn btn-primary" />
+            <br />
         </form>
     </div>
 </div>

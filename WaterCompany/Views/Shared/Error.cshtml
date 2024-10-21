@@ -3,6 +3,8 @@
     ViewData["Title"] = "Error";
 }
 
+<br />
+<br />
 
 @if (ViewBag.ErrorTitle == null)
 {
@@ -14,6 +16,12 @@ else
     <h1 class="text-danger">@ViewBag.ErrorTitle</h1>
     <h2 class="text-danger">@Html.Raw(ViewBag.ErrorMessage)</h2>
 }
+
+<br />
+<br />
+<br />
+<br />
+
 @*
 
 @if (Model.ShowRequestId)

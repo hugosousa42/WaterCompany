@@ -3,14 +3,15 @@
     ViewData["Title"] = "AddClient";
 }
 
-<h2>Add Client</h2>
+<br />
 
-<h4>To Bill</h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddClient" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h2>Add Client to bill</h2>
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
                 <select asp-for="UserId" asp-items="Model.Users" class="form-control"></select>
@@ -25,6 +26,9 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
                 <a asp-action="Index" class="btn btn-success">Back to List</a>
             </div>
+
+            <br />
+            <br />
         </form>
     </div>
 </div>

@@ -44,5 +44,9 @@ namespace WaterCompany.Helpers
         IEnumerable<SelectListItem> GetComboUsers();
 
         Task<string> GetRoleAsync(User user);
+
+        Task<IEnumerable<User>> GetUsersByRoleAdminAsync();
+
+        Task<IEnumerable<User>> GetUsersByRoleEmployeeAsync();
     }
 }
