@@ -1,27 +1,24 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using WaterCompany.Models;
 
 namespace WaterCompany.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration; 
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
             return View();
-        }   
+        }
 
         public IActionResult About()
         {
@@ -45,9 +42,10 @@ namespace WaterCompany.Controllers
 
         public IActionResult Location()
         {
+            var googleMapsApiKey = _configuration["GoogleMaps:ApiKey"];
+            ViewBag.GoogleMapsApiKey = googleMapsApiKey;
+
             return View();
         }
-
-       
     }
 }
